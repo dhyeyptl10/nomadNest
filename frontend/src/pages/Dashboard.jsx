@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import './Dashboard.css'
 
 const TRIPS = [
   {
@@ -127,21 +126,22 @@ export default function Dashboard() {
   }, [])
 
   return (
-    <div className={`dash-root ${mounted ? 'mounted' : ''}`}>
+    <div className={`flex h-screen w-screen overflow-hidden bg-cream opacity-0 transition-opacity duration-[0.55s] ease-out ${mounted ? 'opacity-100' : ''}`}>
 
       {/* ── Sidebar ── */}
-      <aside className="sidebar">
-        <div className="sidebar-logo">
-          <div className="sidebar-logo-icon">
+      <aside className="w-[248px] shrink-0 bg-charcoal flex flex-col p-[26px_16px] h-screen overflow-hidden relative border-r border-white/5 before:content-[''] before:absolute before:-top-[60px] before:-left-[60px] before:w-[220px] before:h-[220px] before:bg-[radial-gradient(circle,rgba(201,150,58,0.09)_0%,transparent_70%)] before:pointer-events-none">
+        
+        <div className="flex items-center gap-[12px] px-[8px] mb-[38px]">
+          <div className="w-[38px] h-[38px] rounded-[10px] bg-gradient-to-br from-gold/25 to-gold/10 border border-gold/35 flex items-center justify-center shadow-[0_2px_10px_rgba(201,150,58,0.15)]">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="3 18 12 2 21 18"/>
               <path d="M9 18 12 12 15 18"/>
             </svg>
           </div>
-          <span className="sidebar-logo-name">Wanderlust</span>
+          <span className="text-[15px] font-semibold text-white tracking-[0.4px]">Wanderlust</span>
         </div>
 
-        <nav className="sidebar-nav">
+        <nav className="flex flex-col gap-[3px] flex-1">
           {[
             { id: 'home',     label: 'Overview',  icon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z' },
             { id: 'trips',    label: 'My Trips',  icon: 'M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3m4 13H9a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2z' },
@@ -151,10 +151,10 @@ export default function Dashboard() {
           ].map(item => (
             <button
               key={item.id}
-              className={`nav-item ${activeNav === item.id ? 'active' : ''}`}
+              className={`flex items-center gap-[13px] p-[12px_14px] border-none bg-transparent rounded-[11px] text-[14px] font-medium font-body cursor-pointer text-left w-full transition-all duration-200 relative tracking-[0.1px] hover:bg-white/5 hover:text-white/80 hover:pl-[18px] ${activeNav === item.id ? 'bg-gradient-to-br from-gold/20 to-gold/10 text-gold-light border border-gold/15 before:content-[""] before:absolute before:left-0 before:top-[20%] before:bottom-[20%] before:w-[3px] before:bg-gold before:rounded-[0_3px_3px_0]' : 'text-white/45'}`}
               onClick={() => setActiveNav(item.id)}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                 {item.icon.split(' M').map((d, i) => (
                   <path key={i} d={i === 0 ? d : 'M' + d}/>
                 ))}
@@ -164,13 +164,13 @@ export default function Dashboard() {
           ))}
         </nav>
 
-        <div className="sidebar-footer">
-          <div className="sidebar-avatar">A</div>
-          <div className="sidebar-user">
-            <p className="sidebar-user-name">Ananya Sharma</p>
-            <p className="sidebar-user-email">ananya@example.com</p>
+        <div className="flex items-center gap-[10px] pt-[14px] px-[8px] border-t border-white/5 mt-[16px]">
+          <div className="w-[36px] h-[36px] rounded-full bg-gradient-to-br from-gold to-[#e8a830] text-white flex items-center justify-center text-[14px] font-bold shrink-0 shadow-[0_2px_10px_rgba(201,150,58,0.3)]">A</div>
+          <div className="flex-1 overflow-hidden">
+            <p className="text-[13px] font-semibold text-white whitespace-nowrap overflow-hidden text-ellipsis">Ananya Sharma</p>
+            <p className="text-[11px] text-white/40 whitespace-nowrap overflow-hidden text-ellipsis mt-[1px]">ananya@example.com</p>
           </div>
-          <button className="logout-btn" onClick={() => navigate('/')} title="Sign out">
+          <button className="border-none bg-transparent text-white/30 cursor-pointer p-[7px] rounded-[8px] flex transition-colors duration-200 hover:text-white/85 hover:bg-white/5" onClick={() => navigate('/')} title="Sign out">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
               <polyline points="16 17 21 12 16 7"/>
@@ -181,23 +181,24 @@ export default function Dashboard() {
       </aside>
 
       {/* ── Main ── */}
-      <main className="dash-main">
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0 bg-cream-mid">
 
         {/* Header */}
-        <header className="dash-header">
+        <header className="flex items-center justify-between p-[28px_36px_0] bg-cream-mid animate-[fadeDown_0.5s_cubic-bezier(0.16,1,0.3,1)_0.1s_both]">
           <div>
-            <h1 className="dash-greeting">
+            <h1 className="font-display text-[26px] font-bold text-text-dark mb-[4px] tracking-[-0.3px]">
               Good morning, Ananya!{' '}
-              <span className="dash-greeting-wave">
+              <span className="inline-block w-[32px] h-[32px] rounded-full overflow-hidden ml-[8px] align-middle border-[2px] border-gold/25">
                 <img
                   src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=80&q=80&fit=crop&crop=face"
                   alt="User avatar"
+                  className="w-full h-full object-cover"
                 />
               </span>
             </h1>
-            <p className="dash-sub">Ready for your next adventure?</p>
+            <p className="text-[14px] text-text-mid font-normal">Ready for your next adventure?</p>
           </div>
-          <button className="new-trip-btn">
+          <button className="relative overflow-hidden flex items-center gap-[8px] p-[12px_22px] bg-charcoal text-white border-none rounded-[13px] text-[14px] font-semibold font-body cursor-pointer transition-all duration-200 tracking-[0.2px] hover:bg-charcoal-mid hover:-translate-y-[1px] hover:shadow-[0_8px_24px_rgba(26,31,46,0.3)] after:content-[''] after:absolute after:inset-0 after:bg-gradient-to-br after:from-white/10 after:to-transparent after:pointer-events-none">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
@@ -205,46 +206,53 @@ export default function Dashboard() {
           </button>
         </header>
 
-        <div className="dash-content">
+        <div className="flex-1 overflow-y-auto p-[26px_36px_36px] flex flex-col gap-[26px]">
 
           {/* Stats */}
-          <div className="stats-grid">
+          <div className="grid grid-cols-4 gap-[16px]">
             {STATS.map((s, i) => (
-              <div className="stat-card" key={s.label} style={{ animationDelay: `${i * 0.08}s` }}>
-                <div className="stat-icon-wrap">
-                  <img src={s.img} alt={s.label} />
-                  <div className="stat-icon-overlay">{s.svgIcon}</div>
+              <div 
+                className="bg-white rounded-[20px] p-[22px] flex flex-col gap-[4px] border border-black/5 animate-[fadeUp_0.5s_cubic-bezier(0.16,1,0.3,1)_both] transition-all duration-200 relative overflow-hidden hover:-translate-y-[4px] hover:shadow-[0_12px_36px_rgba(0,0,0,0.1)] before:content-[''] before:absolute before:top-0 before:right-0 before:w-[80px] before:h-[80px] before:rounded-[0_20px_0_100%] before:opacity-5" 
+                key={s.label} 
+                style={{ animationDelay: `${i * 0.08}s` }}
+              >
+                {/* Dynamically insert before bg color via inline style or custom tailwind mapped to original */}
+                <div className="absolute top-0 right-0 w-[80px] h-[80px] rounded-[0_20px_0_100%] opacity-5 pointer-events-none" style={{ backgroundColor: i===0 ? '#4DB6A9' : i===1 ? '#7B8FD4' : i===2 ? '#E07B7B' : '#C9963A' }}></div>
+
+                <div className="w-[44px] h-[44px] rounded-[12px] overflow-hidden mb-[10px] shrink-0 relative">
+                  <img src={s.img} alt={s.label} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">{s.svgIcon}</div>
                 </div>
-                <p className="stat-value">{s.value}</p>
-                <p className="stat-label">{s.label}</p>
-                <p className={`stat-change ${s.changeType}`}>{s.change}</p>
+                <p className="font-display text-[28px] font-bold text-text-dark leading-none tracking-[-0.5px]">{s.value}</p>
+                <p className="text-[11.5px] text-text-light font-medium uppercase tracking-[0.7px] mt-[2px]">{s.label}</p>
+                <p className={`text-[11px] font-semibold mt-[6px] flex items-center gap-[3px] ${s.changeType === 'up' ? 'text-[#2A9D8F]' : 'text-gold'}`}>{s.change}</p>
               </div>
             ))}
           </div>
 
           {/* Two columns */}
-          <div className="dash-columns">
+          <div className="grid grid-cols-[1.25fr_0.75fr] gap-[20px] min-h-0">
 
             {/* My Trips */}
-            <section className="trips-section">
-              <div className="section-header">
-                <h2 className="section-title">My Trips</h2>
-                <button className="see-all">See all</button>
+            <section className="bg-white rounded-[22px] p-[24px] border border-black/5 animate-[fadeUp_0.55s_cubic-bezier(0.16,1,0.3,1)_0.2s_both]">
+              <div className="flex items-center justify-between mb-[18px]">
+                <h2 className="font-display text-[18px] font-bold text-text-dark tracking-[-0.2px]">My Trips</h2>
+                <button className="border-none bg-transparent text-[13px] text-gold font-semibold cursor-pointer font-body p-0 transition-opacity duration-200 hover:opacity-70">See all</button>
               </div>
-              <div className="trips-list">
+              <div className="flex flex-col gap-[4px]">
                 {TRIPS.map((trip, i) => (
-                  <div className="trip-row" key={trip.id} style={{ animationDelay: `${0.12 + i * 0.09}s` }}>
-                    <img src={trip.img} alt={trip.dest} className="trip-row-img" />
-                    <div className="trip-row-info">
-                      <p className="trip-row-dest">{trip.dest}</p>
-                      <p className="trip-row-dates">{trip.dates} · {trip.days} days</p>
+                  <div className="flex items-center gap-[14px] p-[13px] rounded-[14px] cursor-pointer transition-all duration-200 animate-[fadeRight_0.45s_cubic-bezier(0.16,1,0.3,1)_both] hover:bg-cream hover:translate-x-[4px]" key={trip.id} style={{ animationDelay: `${0.12 + i * 0.09}s` }}>
+                    <img src={trip.img} alt={trip.dest} className="w-[56px] h-[56px] rounded-[14px] object-cover shrink-0 border-[2px] border-black/5" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[14.5px] font-semibold text-text-dark mb-[3px] tracking-[-0.1px]">{trip.dest}</p>
+                      <p className="text-[12px] text-text-mid font-normal">{trip.dates} · {trip.days} days</p>
                     </div>
-                    <div className="trip-row-right">
-                      <span className={`trip-status-badge ${trip.status}`}>
+                    <div className="flex flex-col items-end gap-[5px] shrink-0">
+                      <span className={`text-[11px] font-semibold p-[4px_11px] rounded-full whitespace-nowrap tracking-[0.2px] ${trip.status === 'upcoming' ? 'bg-[#2A9D8F]/10 text-[#1E8A7D] border border-[#2A9D8F]/20' : trip.status === 'planning' ? 'bg-gold/10 text-[#9B7020] border border-gold/20' : 'bg-[#C0605E]/10 text-[#B05250] border border-[#C0605E]/20'}`}>
                         {statusLabel(trip.status)}
                       </span>
                       {trip.daysLeft && (
-                        <p className="trip-days-left">{trip.daysLeft}d away</p>
+                        <p className="text-[11px] text-text-light font-medium">{trip.daysLeft}d away</p>
                       )}
                     </div>
                   </div>
@@ -253,20 +261,20 @@ export default function Dashboard() {
             </section>
 
             {/* Explore */}
-            <section className="explore-section">
-              <div className="section-header">
-                <h2 className="section-title">Explore</h2>
-                <button className="see-all">Discover more</button>
+            <section className="flex flex-col animate-[fadeUp_0.55s_cubic-bezier(0.16,1,0.3,1)_0.28s_both]">
+              <div className="flex items-center justify-between mb-[18px]">
+                <h2 className="font-display text-[18px] font-bold text-text-dark tracking-[-0.2px]">Explore</h2>
+                <button className="border-none bg-transparent text-[13px] text-gold font-semibold cursor-pointer font-body p-0 transition-opacity duration-200 hover:opacity-70">Discover more</button>
               </div>
-              <div className="explore-cards">
+              <div className="flex flex-col gap-[14px] flex-1">
                 {EXPLORE.map((place, i) => (
-                  <div className="explore-card" key={place.name} style={{ animationDelay: `${0.18 + i * 0.1}s` }}>
-                    <img src={place.img} alt={place.name} className="explore-img" />
-                    <div className="explore-overlay">
-                      <span className="explore-tag">{place.tag}</span>
+                  <div className="relative rounded-[18px] overflow-hidden cursor-pointer flex-1 min-h-[90px] animate-[fadeRight_0.45s_cubic-bezier(0.16,1,0.3,1)_both] shadow-[0_4px_20px_rgba(0,0,0,0.1)] transition-all duration-300 ease-out hover:-translate-y-[3px] hover:scale-[1.01] hover:shadow-[0_12px_36px_rgba(0,0,0,0.18)] group" key={place.name} style={{ animationDelay: `${0.18 + i * 0.1}s` }}>
+                    <img src={place.img} alt={place.name} className="w-full h-full object-cover min-h-[90px] block transition-transform duration-[0.55s] ease-out group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#0f1428]/70 via-[#0f1428]/15 to-transparent flex items-center justify-between px-[18px]">
+                      <span className="text-[10px] font-bold uppercase tracking-[1.2px] text-gold-light bg-gold/20 p-[4px_10px] rounded-full border border-gold/45 backdrop-blur-md">{place.tag}</span>
                       <div>
-                        <p className="explore-name">{place.name}</p>
-                        <p className="explore-country">{place.country}</p>
+                        <p className="text-[14px] font-bold text-white text-right tracking-[-0.2px]">{place.name}</p>
+                        <p className="text-[11px] text-white/60 text-right mt-[2px] font-normal">{place.country}</p>
                       </div>
                     </div>
                   </div>

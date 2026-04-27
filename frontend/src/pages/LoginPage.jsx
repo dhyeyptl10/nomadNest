@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import './LoginPage.css'
 
 const MOUNTAIN_BG = 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1400&q=85&fit=crop'
 const BALI_THUMB = 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=120&q=80&fit=crop'
@@ -103,46 +102,46 @@ export default function LoginPage() {
   }
 
   return (
-    <div className={`login-root ${mounted ? 'mounted' : ''}`}>
+    <div className={`flex flex-col md:flex-row min-h-screen w-full bg-cream overflow-hidden transition-opacity duration-700 ease-out ${mounted ? 'opacity-100' : 'opacity-0'}`}>
 
       {/* LEFT — Hero panel */}
-      <div className="hero-panel">
+      <div className="relative flex-none md:flex-[0_0_52%] flex flex-col justify-end overflow-hidden h-[44vh] md:h-auto min-h-[280px] md:min-h-0">
         <img
           src={MOUNTAIN_BG}
           alt="Mountain landscape"
-          className={`hero-bg ${imgLoaded ? 'loaded' : ''}`}
+          className={`absolute inset-0 w-full h-full object-cover transform transition-all duration-[6000ms] ease-out opacity-0 scale-105 ${imgLoaded ? 'opacity-100 !scale-100' : ''}`}
           onLoad={() => setImgLoaded(true)}
         />
-        <div className="hero-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a1220]/60 via-[#0a1220]/15 to-[#0a1220]/70 pointer-events-none" />
 
         {/* Logo */}
-        <div className="logo" style={{ animationDelay: '0.1s' }}>
-          <div className="logo-icon">
+        <div className="absolute top-[30px] left-[30px] flex items-center gap-[11px] z-10 opacity-0 animate-[fadeDown_0.65s_cubic-bezier(0.16,1,0.3,1)_0.1s_forwards]">
+          <div className="w-[42px] h-[42px] rounded-[12px] bg-white/10 backdrop-blur-md border border-white/30 flex items-center justify-center shadow-lg">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="3 18 12 2 21 18"/>
               <path d="M9 18 12 12 15 18"/>
             </svg>
           </div>
-          <div className="logo-text">
-            <span className="logo-name">WANDERLUST</span>
-            <span className="logo-sub">TRAVEL</span>
+          <div className="flex flex-col leading-none">
+            <span className="font-body text-[12.5px] font-bold text-white tracking-[2.5px]">WANDERLUST</span>
+            <span className="font-body text-[9.5px] font-normal text-white/60 tracking-[3.5px] mt-[3px]">TRAVEL</span>
           </div>
         </div>
 
         {/* Hero copy */}
-        <div className="hero-content">
-          <h1 className="hero-title" style={{ animationDelay: '0.2s' }}>
+        <div className="relative z-10 px-[44px] pb-[30px] opacity-0 animate-[fadeUp_0.75s_cubic-bezier(0.16,1,0.3,1)_0.25s_forwards]">
+          <h1 className="font-display text-[clamp(38px,4.8vw,60px)] font-extrabold text-white leading-[1.08] tracking-[-0.8px] mb-[16px]">
             Explore More
             <br />
-            <span className="hero-title-gold">Live More</span>
+            <span className="text-gold-light">Live More</span>
           </h1>
-          <p className="hero-desc" style={{ animationDelay: '0.35s' }}>
+          <p className="text-[14.5px] text-white/80 leading-[1.65] max-w-[380px] mb-[26px] font-light tracking-[0.1px]">
             The world is waiting for you. Start your journey today and collect unforgettable moments.
           </p>
-          <ul className="hero-features" style={{ animationDelay: '0.5s' }}>
+          <ul className="flex flex-col gap-[11px]">
             {['Curated destinations worldwide', 'AI-powered trip planning', 'Exclusive member deals'].map((f, i) => (
-              <li key={f} style={{ animationDelay: `${0.5 + i * 0.12}s` }}>
-                <span className="check-icon">
+              <li key={f} className="flex items-center gap-[11px] text-[14px] text-white/90 font-normal opacity-0 animate-[fadeRight_0.55s_cubic-bezier(0.16,1,0.3,1)_forwards]" style={{ animationDelay: `${0.5 + i * 0.12}s` }}>
+                <span className="w-[22px] h-[22px] rounded-full bg-gold flex items-center justify-center shrink-0 shadow-[0_2px_8px_rgba(201,150,58,0.4)]">
                   <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
                     <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -154,26 +153,28 @@ export default function LoginPage() {
         </div>
 
         {/* Trip card */}
-        <div className="trip-card" style={{ animationDelay: '0.75s' }}>
-          <img src={BALI_THUMB} alt="Bali" className="trip-thumb" />
-          <div className="trip-info">
-            <p className="trip-name">Next Trip: Bali, Indonesia</p>
-            <p className="trip-dates">20 May — 02 June 2024 · 12 Days</p>
+        <div className="relative z-10 mx-[24px] mb-[24px] p-[14px_18px] bg-white/10 backdrop-blur-xl border border-white/20 rounded-[18px] flex items-center gap-[15px] opacity-0 animate-[fadeUp_0.65s_cubic-bezier(0.16,1,0.3,1)_0.8s_forwards] transition-all duration-200 hover:bg-white/20 hover:-translate-y-[2px]">
+          <img src={BALI_THUMB} alt="Bali" className="w-[48px] h-[48px] rounded-[12px] object-cover shrink-0 border-[1.5px] border-white/20" />
+          <div className="flex-1">
+            <p className="text-[13.5px] font-semibold text-white mb-[3px]">Next Trip: Bali, Indonesia</p>
+            <p className="text-[12px] text-white/60 font-light">20 May — 02 June 2024 · 12 Days</p>
           </div>
-          <div className="trip-badge">12 Days to go</div>
+          <div className="text-[12px] font-semibold text-gold-light bg-gold/20 border border-gold/30 rounded-full px-[14px] py-[6px] whitespace-nowrap tracking-[0.2px]">12 Days to go</div>
         </div>
       </div>
 
       {/* RIGHT — Auth panel */}
-      <div className="auth-panel">
-        <div className="auth-card" style={{ animationDelay: '0.15s' }}>
+      <div className="flex-1 md:flex-[0_0_48%] flex items-center justify-center p-[24px_20px_36px] md:p-[36px_40px] bg-cream overflow-y-auto relative z-0">
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(ellipse at 70% 20%, rgba(201,150,58,0.06) 0%, transparent 65%), radial-gradient(ellipse at 20% 80%, rgba(26,47,78,0.04) 0%, transparent 65%)' }} />
 
+        <div className="relative w-full max-w-[430px] bg-white rounded-[28px] p-[28px_22px] md:p-[38px_40px] shadow-lg border border-black/5 opacity-0 translate-y-[28px] animate-[fadeUp_0.75s_cubic-bezier(0.16,1,0.3,1)_0.18s_forwards] z-10">
+          
           {/* Tabs */}
-          <div className="tabs">
+          <div className="grid grid-cols-2 bg-cream rounded-[14px] p-[4px] mb-[30px] border border-border-light">
             {['signin', 'signup'].map(t => (
               <button
                 key={t}
-                className={`tab-btn ${tab === t ? 'active' : ''}`}
+                className={`border-none bg-transparent py-[11px] px-[16px] rounded-[11px] text-[14px] font-medium font-body text-text-mid cursor-pointer transition-all duration-300 tracking-[0.1px] ${tab === t ? 'bg-white !text-text-dark shadow-sm !font-semibold' : ''}`}
                 onClick={() => handleTabChange(t)}
                 type="button"
               >
@@ -183,11 +184,11 @@ export default function LoginPage() {
           </div>
 
           {/* Heading */}
-          <div className={`auth-heading ${tab}`}>
-            <h2 className="auth-title">
+          <div className="mb-[26px]">
+            <h2 className="font-display text-[24px] font-bold text-text-dark mb-[7px] leading-[1.22] tracking-[-0.3px]">
               {tab === 'signin' ? 'Welcome back, Explorer!' : 'Start your adventure!'}
             </h2>
-            <p className="auth-subtitle">
+            <p className="text-[14px] text-text-mid leading-[1.55] font-normal">
               {tab === 'signin'
                 ? 'Sign in to continue planning your adventures.'
                 : 'Create an account to begin your journey.'}
@@ -195,15 +196,15 @@ export default function LoginPage() {
           </div>
 
           {/* Form */}
-          <form className="auth-form" onSubmit={handleSubmit}>
+          <form className="flex flex-col gap-[15px]" onSubmit={handleSubmit}>
             {tab === 'signup' && (
-              <div className="field" key="name-field">
-                <label className="field-label">Full Name</label>
-                <div className="field-wrap">
-                  <span className="field-icon"><UserIcon /></span>
+              <div className="flex flex-col gap-[7px]" key="name-field">
+                <label className="text-[13px] font-medium text-text-dark tracking-[0.1px]">Full Name</label>
+                <div className="relative flex items-center group">
+                  <span className="absolute left-[14px] text-text-light flex pointer-events-none z-10"><UserIcon /></span>
                   <input
                     type="text"
-                    className="field-input"
+                    className="w-full py-[13px] pr-[46px] pl-[44px] border-[1.5px] border-border rounded-[13px] text-[14px] font-body text-text-dark bg-white transition-all duration-200 outline-none tracking-[0.1px] placeholder:text-text-light placeholder:font-light hover:border-black/20 focus:border-gold focus:ring-[3.5px] focus:ring-gold/10"
                     placeholder="Ananya Sharma"
                     value={form.name}
                     onChange={e => setForm({ ...form, name: e.target.value })}
@@ -213,13 +214,13 @@ export default function LoginPage() {
               </div>
             )}
 
-            <div className="field">
-              <label className="field-label">Email Address</label>
-              <div className="field-wrap">
-                <span className="field-icon"><MailIcon /></span>
+            <div className="flex flex-col gap-[7px]">
+              <label className="text-[13px] font-medium text-text-dark tracking-[0.1px]">Email Address</label>
+              <div className="relative flex items-center">
+                <span className="absolute left-[14px] text-text-light flex pointer-events-none z-10"><MailIcon /></span>
                 <input
                   type="email"
-                  className="field-input"
+                  className="w-full py-[13px] pr-[46px] pl-[44px] border-[1.5px] border-border rounded-[13px] text-[14px] font-body text-text-dark bg-white transition-all duration-200 outline-none tracking-[0.1px] placeholder:text-text-light placeholder:font-light hover:border-black/20 focus:border-gold focus:ring-[3.5px] focus:ring-gold/10"
                   placeholder="ananya@example.com"
                   value={form.email}
                   onChange={e => setForm({ ...form, email: e.target.value })}
@@ -228,13 +229,13 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="field">
-              <label className="field-label">Password</label>
-              <div className="field-wrap">
-                <span className="field-icon"><LockIcon /></span>
+            <div className="flex flex-col gap-[7px]">
+              <label className="text-[13px] font-medium text-text-dark tracking-[0.1px]">Password</label>
+              <div className="relative flex items-center">
+                <span className="absolute left-[14px] text-text-light flex pointer-events-none z-10"><LockIcon /></span>
                 <input
                   type={showPass ? 'text' : 'password'}
-                  className="field-input"
+                  className="w-full py-[13px] pr-[46px] pl-[44px] border-[1.5px] border-border rounded-[13px] text-[14px] font-body text-text-dark bg-white transition-all duration-200 outline-none tracking-[0.1px] placeholder:text-text-light placeholder:font-light hover:border-black/20 focus:border-gold focus:ring-[3.5px] focus:ring-gold/10"
                   placeholder="••••••••"
                   value={form.password}
                   onChange={e => setForm({ ...form, password: e.target.value })}
@@ -242,7 +243,7 @@ export default function LoginPage() {
                 />
                 <button
                   type="button"
-                  className="eye-btn"
+                  className="absolute right-[13px] border-none bg-transparent cursor-pointer text-text-light flex p-[5px] rounded-[7px] transition-colors duration-200 hover:text-text-mid hover:bg-cream"
                   onClick={() => setShowPass(v => !v)}
                   tabIndex={-1}
                 >
@@ -252,13 +253,13 @@ export default function LoginPage() {
             </div>
 
             {tab === 'signup' && (
-              <div className="field" key="confirm-field">
-                <label className="field-label">Confirm Password</label>
-                <div className="field-wrap">
-                  <span className="field-icon"><LockIcon /></span>
+              <div className="flex flex-col gap-[7px]" key="confirm-field">
+                <label className="text-[13px] font-medium text-text-dark tracking-[0.1px]">Confirm Password</label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-[14px] text-text-light flex pointer-events-none z-10"><LockIcon /></span>
                   <input
                     type={showConfirmPass ? 'text' : 'password'}
-                    className="field-input"
+                    className="w-full py-[13px] pr-[46px] pl-[44px] border-[1.5px] border-border rounded-[13px] text-[14px] font-body text-text-dark bg-white transition-all duration-200 outline-none tracking-[0.1px] placeholder:text-text-light placeholder:font-light hover:border-black/20 focus:border-gold focus:ring-[3.5px] focus:ring-gold/10"
                     placeholder="••••••••"
                     value={form.confirmPassword}
                     onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
@@ -266,7 +267,7 @@ export default function LoginPage() {
                   />
                   <button
                     type="button"
-                    className="eye-btn"
+                    className="absolute right-[13px] border-none bg-transparent cursor-pointer text-text-light flex p-[5px] rounded-[7px] transition-colors duration-200 hover:text-text-mid hover:bg-cream"
                     onClick={() => setShowConfirmPass(v => !v)}
                     tabIndex={-1}
                   >
@@ -277,14 +278,15 @@ export default function LoginPage() {
             )}
 
             {tab === 'signin' && (
-              <div className="forgot-row">
-                <button type="button" className="forgot-btn">Forgot password?</button>
+              <div className="flex justify-end -mt-[4px]">
+                <button type="button" className="border-none bg-transparent text-[13px] text-text-mid cursor-pointer font-body p-0 transition-colors duration-200 font-medium hover:text-gold">Forgot password?</button>
               </div>
             )}
 
-            <button type="submit" className={`submit-btn ${loading ? 'loading' : ''}`} disabled={loading}>
+            <button type="submit" className={`relative overflow-hidden flex items-center justify-center gap-[9px] w-full p-[15px] bg-charcoal text-white border-none rounded-[14px] text-[15px] font-semibold font-body cursor-pointer tracking-[0.3px] transition-all duration-200 mt-[4px] min-h-[52px] group disabled:cursor-not-allowed disabled:opacity-85 ${loading ? 'pointer-events-none' : 'hover:bg-charcoal-mid hover:-translate-y-[1px] hover:shadow-[0_8px_28px_rgba(26,31,46,0.35)] active:translate-y-0 active:shadow-none'}`} disabled={loading}>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
               {loading ? (
-                <span className="spinner" />
+                <span className="w-[20px] h-[20px] border-[2.5px] border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
                   {tab === 'signin' ? 'Sign In' : 'Create Account'}
@@ -297,17 +299,17 @@ export default function LoginPage() {
             </button>
 
             {/* Divider */}
-            <div className="or-divider">
+            <div className="flex items-center gap-[14px] text-text-light text-[13px] font-normal before:content-[''] before:flex-1 before:h-[1px] before:bg-border after:content-[''] after:flex-1 after:h-[1px] after:bg-border">
               <span>or continue with</span>
             </div>
 
             {/* Social */}
-            <div className="social-row">
-              <button type="button" className="social-btn">
+            <div className="grid grid-cols-2 gap-[12px]">
+              <button type="button" className="flex items-center justify-center gap-[9px] p-[12px_16px] bg-white border-[1.5px] border-border rounded-[13px] text-[14px] font-medium font-body text-text-dark cursor-pointer transition-all duration-200 tracking-[0.1px] hover:bg-cream hover:border-black/15 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] active:translate-y-0">
                 <GoogleIcon />
                 <span>Google</span>
               </button>
-              <button type="button" className="social-btn">
+              <button type="button" className="flex items-center justify-center gap-[9px] p-[12px_16px] bg-white border-[1.5px] border-border rounded-[13px] text-[14px] font-medium font-body text-text-dark cursor-pointer transition-all duration-200 tracking-[0.1px] hover:bg-cream hover:border-black/15 hover:-translate-y-[1px] hover:shadow-[0_4px_14px_rgba(0,0,0,0.07)] active:translate-y-0">
                 <AppleIcon />
                 <span>Apple</span>
               </button>
@@ -315,11 +317,11 @@ export default function LoginPage() {
           </form>
 
           {/* Footer */}
-          <p className="auth-footer">
+          <p className="text-center mt-[22px] text-[14px] text-text-mid">
             {tab === 'signin' ? "Don't have an account? " : 'Already have an account? '}
             <button
               type="button"
-              className="footer-link"
+              className="border-none bg-transparent text-[14px] font-semibold font-body text-gold cursor-pointer underline underline-offset-2 decoration-gold/40 p-0 transition-colors duration-200 hover:text-[#a07828] hover:decoration-[#a07828]"
               onClick={() => handleTabChange(tab === 'signin' ? 'signup' : 'signin')}
             >
               {tab === 'signin' ? 'Sign up' : 'Sign in'}
