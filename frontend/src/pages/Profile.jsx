@@ -23,11 +23,13 @@ const BADGES = [
   { icon:'💎', label:'Luxury Nomad',     desc:'3 5-star stays',           earned:false },
 ]
 
+const IMG = (seed, w = 600, h = 400) => `https://picsum.photos/seed/${seed}/${w}/${h}`
+
 const TRIPS_DONE = [
-  { dest:'Goa, India',       date:'Jan 2024',  days:7,  img:'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=200&q=80&fit=crop', rating:5 },
-  { dest:'Maldives',         date:'Mar 2024',  days:7,  img:'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=200&q=80&fit=crop', rating:5 },
-  { dest:'Rajasthan, India', date:'Oct 2023',  days:10, img:'https://images.unsplash.com/photo-1477587458883-47145ed31805?w=200&q=80&fit=crop', rating:4 },
-  { dest:'Dubai, UAE',       date:'Dec 2022',  days:5,  img:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=200&q=80&fit=crop', rating:5 },
+  { dest:'Goa, India',       date:'Jan 2024',  days:7,  img:IMG('goa', 200, 200), rating:5 },
+  { dest:'Maldives',         date:'Mar 2024',  days:7,  img:IMG('maldives', 200, 200), rating:5 },
+  { dest:'Rajasthan, India', date:'Oct 2023',  days:10, img:IMG('jaipur', 200, 200), rating:4 },
+  { dest:'Dubai, UAE',       date:'Dec 2022',  days:5,  img:IMG('dubai', 200, 200), rating:5 },
 ]
 
 const REVIEWS = [
@@ -76,12 +78,12 @@ export default function Profile() {
           {/* Profile hero */}
           <div className="profile-hero">
             <div className="profile-hero-bg">
-              <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&q=85&fit=crop" alt="Cover" className="profile-cover-img" />
+              <img src={IMG('mountain', 1400, 500)} alt="Cover" className="profile-cover-img" />
               <div className="profile-cover-overlay" />
             </div>
             <div className="profile-hero-content">
               <div className="profile-avatar-wrap">
-                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&q=80&fit=crop&crop=face" className="profile-avatar" alt="Ananya" />
+                <img src={IMG('portrait', 160, 160)} className="profile-avatar" alt="Ananya" />
                 <div className="profile-avatar-badge">🌍</div>
               </div>
               <div className="profile-hero-info">

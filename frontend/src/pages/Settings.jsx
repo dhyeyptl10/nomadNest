@@ -55,7 +55,7 @@ export default function Settings() {
                   <h2 className="settings-group-title">Profile Information</h2>
                   {/* Avatar */}
                   <div className="settings-avatar-row">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&q=80&fit=crop&crop=face" className="settings-avatar" alt="User" />
+                    <img src="https://picsum.photos/seed/portrait/160/160" className="settings-avatar" alt="User" />
                     <div>
                       <p className="settings-avatar-name">Ananya Sharma</p>
                       <p className="settings-avatar-role">🌍 Explorer · Member since 2022</p>
