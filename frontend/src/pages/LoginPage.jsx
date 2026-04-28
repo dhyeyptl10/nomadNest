@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './LoginPage.css'
 
-const MOUNTAIN_BG = 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1400&q=85&fit=crop'
-const BALI_THUMB = 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=120&q=80&fit=crop'
+const MOUNTAIN_BG = 'https://picsum.photos/seed/mountain/1200/800'
+const BALI_THUMB = 'https://picsum.photos/seed/bali/300/300'
 
 function GoogleIcon() {
   return (

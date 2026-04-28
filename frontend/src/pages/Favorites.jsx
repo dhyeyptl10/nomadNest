@@ -3,11 +3,13 @@ import Sidebar from '../components/Sidebar'
 import './Destinations.css'
 import './Favorites.css'
 
+const IMG = (seed, w = 600, h = 400) => `https://picsum.photos/seed/${seed}/${w}/${h}`
+
 const FAVS = [
-  { name: 'Maldives',     country: 'South Asia',  rating: 4.9, price: '₹1,20,000', img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&q=80&fit=crop', note: 'Dream honeymoon spot 🌴' },
-  { name: 'Swiss Alps',   country: 'Switzerland', rating: 4.9, price: '₹1,50,000', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80&fit=crop', note: 'Winter skiing bucket list ⛷️' },
-  { name: 'Kyoto',        country: 'Japan',       rating: 4.9, price: '₹1,30,000', img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&q=80&fit=crop', note: 'Cherry blossom season 🌸' },
-  { name: 'Patagonia',    country: 'Argentina',   rating: 4.8, price: '₹1,80,000', img: 'https://images.unsplash.com/photo-1531761535209-180857e963b9?w=600&q=80&fit=crop', note: 'Ultimate adventure trip 🏔️' },
+  { name: 'Maldives',     country: 'South Asia',  rating: 4.9, price: '₹1,20,000', img: IMG('maldives'), note: 'Dream honeymoon spot 🌴' },
+  { name: 'Swiss Alps',   country: 'Switzerland', rating: 4.9, price: '₹1,50,000', img: IMG('swissalps'), note: 'Winter skiing bucket list ⛷️' },
+  { name: 'Kyoto',        country: 'Japan',       rating: 4.9, price: '₹1,30,000', img: IMG('kyoto'), note: 'Cherry blossom season 🌸' },
+  { name: 'Patagonia',    country: 'Argentina',   rating: 4.8, price: '₹1,80,000', img: IMG('patagonia'), note: 'Ultimate adventure trip 🏔️' },
 ]
 
 function StarFill() {

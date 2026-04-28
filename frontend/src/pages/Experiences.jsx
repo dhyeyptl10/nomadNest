@@ -3,13 +3,15 @@ import Sidebar from '../components/Sidebar'
 import './Destinations.css'
 import './Experiences.css'
 
+const IMG = (seed, w = 600, h = 400) => `https://picsum.photos/seed/${seed}/${w}/${h}`
+
 const EXPERIENCES = [
-  { name: 'Hot Air Balloon — Cappadocia', location: 'Turkey', cat: 'Adventure', duration: '3h', price: '₹15,000', rating: 4.9, reviews: 840, img: 'https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=600&q=80&fit=crop', tag: 'Bestseller' },
-  { name: 'Ayurvedic Spa Retreat', location: 'Kerala, India', cat: 'Wellness', duration: '1 Day', price: '₹4,500', rating: 4.8, reviews: 320, img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&q=80&fit=crop', tag: 'Popular' },
-  { name: 'Scuba Diving — Great Barrier Reef', location: 'Australia', cat: 'Adventure', duration: '5h', price: '₹22,000', rating: 4.9, reviews: 560, img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80&fit=crop', tag: 'Bucket List' },
-  { name: 'Pasta Making Masterclass', location: 'Rome, Italy', cat: 'Culture', duration: '2.5h', price: '₹6,800', rating: 4.7, reviews: 210, img: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80&fit=crop', tag: 'Trending' },
-  { name: 'Northern Lights Tour', location: 'Iceland', cat: 'Nature', duration: '4h', price: '₹18,500', rating: 4.8, reviews: 430, img: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=600&q=80&fit=crop', tag: 'Exclusive' },
-  { name: 'Sushi Masterclass Tokyo', location: 'Japan', cat: 'Culture', duration: '3h', price: '₹8,200', rating: 4.9, reviews: 370, img: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=600&q=80&fit=crop', tag: 'Trending' },
+  { name: 'Hot Air Balloon — Cappadocia', location: 'Turkey', cat: 'Adventure', duration: '3h', price: '₹15,000', rating: 4.9, reviews: 840, img: IMG('balloon'), tag: 'Bestseller' },
+  { name: 'Ayurvedic Spa Retreat', location: 'Kerala, India', cat: 'Wellness', duration: '1 Day', price: '₹4,500', rating: 4.8, reviews: 320, img: IMG('spa'), tag: 'Popular' },
+  { name: 'Scuba Diving — Great Barrier Reef', location: 'Australia', cat: 'Adventure', duration: '5h', price: '₹22,000', rating: 4.9, reviews: 560, img: IMG('scuba'), tag: 'Bucket List' },
+  { name: 'Pasta Making Masterclass', location: 'Rome, Italy', cat: 'Culture', duration: '2.5h', price: '₹6,800', rating: 4.7, reviews: 210, img: IMG('pasta'), tag: 'Trending' },
+  { name: 'Northern Lights Tour', location: 'Iceland', cat: 'Nature', duration: '4h', price: '₹18,500', rating: 4.8, reviews: 430, img: IMG('northernlights'), tag: 'Exclusive' },
+  { name: 'Sushi Masterclass Tokyo', location: 'Japan', cat: 'Culture', duration: '3h', price: '₹8,200', rating: 4.9, reviews: 370, img: IMG('sushi'), tag: 'Trending' },
 ]
 
 const CATS = ['All', 'Adventure', 'Culture', 'Wellness', 'Nature']
