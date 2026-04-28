@@ -4,47 +4,49 @@ import './Bookings.css'
 
 const TABS = ['All', 'Flights', 'Hotels', 'Activities']
 
+const IMG = (seed, w = 600, h = 400) => `https://picsum.photos/seed/${seed}/${w}/${h}`
+
 const BOOKINGS = [
   {
     id: 'FL001', type: 'Flights', title: 'BLR → DPS (Bali)',
     detail: 'IndiGo · 6E-1234 · Economy', date: '20 May 2024', time: '06:30 AM',
     status: 'Confirmed', price: '₹18,500', ref: 'IGO-2024-BLR-DPS',
-    img: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&q=80&fit=crop',
+    img: IMG('plane'),
     icon: '✈️', duration: '5h 15m',
   },
   {
     id: 'HT001', type: 'Hotels', title: 'Komaneka at Bisma',
     detail: 'Ubud, Bali · Deluxe Room · 2 Adults', date: '20 May — 02 Jun 2024', time: 'Check-in 2PM',
     status: 'Confirmed', price: '₹28,000', ref: 'KOM-2024-0520',
-    img: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=400&q=80&fit=crop',
+    img: IMG('hotel'),
     icon: '🏨', duration: '12 nights',
   },
   {
     id: 'AC001', type: 'Activities', title: 'Ubud Monkey Forest Tour',
     detail: 'Guided Tour · 4 Hours · Pickup Included', date: '23 May 2024', time: '09:00 AM',
     status: 'Confirmed', price: '₹2,800', ref: 'ACT-2024-0523',
-    img: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&q=80&fit=crop',
+    img: IMG('monkey'),
     icon: '🎯', duration: '4 hours',
   },
   {
     id: 'FL002', type: 'Flights', title: 'BLR → ATH (Athens)',
     detail: 'Air India · AI-9874 · Business', date: '15 Jul 2024', time: '11:45 PM',
     status: 'Pending', price: '₹52,000', ref: 'AIA-2024-BLR-ATH',
-    img: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&q=80&fit=crop',
+    img: IMG('firstclass'),
     icon: '✈️', duration: '9h 30m',
   },
   {
     id: 'HT002', type: 'Hotels', title: 'Canaves Oia Epitome',
     detail: 'Santorini · Infinity Pool Suite · 2 Adults', date: '16 Jul — 25 Jul 2024', time: 'Check-in 3PM',
     status: 'Pending', price: '₹68,000', ref: 'CAO-2024-0716',
-    img: 'https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f?w=400&q=80&fit=crop',
+    img: IMG('santorinihotel'),
     icon: '🏨', duration: '9 nights',
   },
   {
     id: 'AC002', type: 'Activities', title: 'Sunset Sailing — Santorini',
     detail: 'Private Yacht · Champagne & Dinner · 4h', date: '20 Jul 2024', time: '05:30 PM',
     status: 'Pending', price: '₹12,500', ref: 'SAL-2024-0720',
-    img: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=400&q=80&fit=crop',
+    img: IMG('sailing'),
     icon: '⛵', duration: '4 hours',
   },
 ]
