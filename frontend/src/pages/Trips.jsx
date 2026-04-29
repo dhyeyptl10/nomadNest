@@ -4,41 +4,43 @@ import './Trips.css'
 
 const TABS = ['All', 'Upcoming', 'Ongoing', 'Completed', 'Wishlist']
 
+const IMG = (seed, w = 600, h = 400) => `https://picsum.photos/seed/${seed}/${w}/${h}`
+
 const TRIPS = [
   {
     id: 1, dest: 'Bali, Indonesia',      status: 'Upcoming',  dates: '20 May — 02 Jun 2024', days: 12,
     daysLeft: 12, progress: 70, budget: '₹55,000', spent: '₹38,500',
-    img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80&fit=crop',
+    img: IMG('bali'),
     activities: ['Temple Tour', 'Surfing', 'Rice Terraces'], members: 2,
   },
   {
     id: 2, dest: 'Santorini, Greece',    status: 'Upcoming',  dates: '15 Jul — 25 Jul 2024', days: 10,
     daysLeft: 57, progress: 30, budget: '₹95,000', spent: '₹28,000',
-    img: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&q=80&fit=crop',
+    img: IMG('santorini'),
     activities: ['Caldera View', 'Wine Tasting', 'Sailing'], members: 2,
   },
   {
     id: 3, dest: 'Kyoto, Japan',         status: 'Wishlist',  dates: 'Sep 2024', days: 9,
     daysLeft: null, progress: 10, budget: '₹1,30,000', spent: '₹0',
-    img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&q=80&fit=crop',
+    img: IMG('kyoto'),
     activities: ['Geisha District', 'Tea Ceremony', 'Bamboo Grove'], members: 1,
   },
   {
     id: 4, dest: 'Goa, India',           status: 'Completed', dates: '01 Jan — 07 Jan 2024', days: 7,
     daysLeft: null, progress: 100, budget: '₹25,000', spent: '₹23,400',
-    img: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&q=80&fit=crop',
+    img: IMG('goa'),
     activities: ['Beach Hopping', 'Nightlife', 'Water Sports'], members: 4,
   },
   {
     id: 5, dest: 'Swiss Alps',           status: 'Wishlist',  dates: 'Dec 2024', days: 10,
     daysLeft: null, progress: 5, budget: '₹1,50,000', spent: '₹0',
-    img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80&fit=crop',
+    img: IMG('swissalps'),
     activities: ['Skiing', 'Cable Car', 'Fondue'], members: 2,
   },
   {
     id: 6, dest: 'Maldives',             status: 'Completed', dates: '10 Mar — 17 Mar 2024', days: 7,
     daysLeft: null, progress: 100, budget: '₹1,20,000', spent: '₹1,14,000',
-    img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&q=80&fit=crop',
+    img: IMG('maldives'),
     activities: ['Snorkeling', 'Overwater Villa', 'Sunset Cruise'], members: 2,
   },
 ]

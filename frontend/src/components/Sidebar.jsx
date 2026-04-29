@@ -97,7 +97,7 @@ export default function Sidebar() {
           {/* Profile row */}
           <div className="sb-profile" onClick={() => navigate('/profile')}>
             <img
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80&fit=crop&crop=face"
+              src="https://picsum.photos/seed/portrait/80/80"
               className="sb-avatar"
               alt="Ananya"
             />
@@ -130,7 +130,7 @@ export default function Sidebar() {
               }
             </svg>
           </button>
-          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80&fit=crop&crop=face" className="sb-avatar" alt="User" onClick={() => navigate('/profile')} style={{ cursor:'pointer' }} />
+          <img src="https://picsum.photos/seed/portrait/80/80" className="sb-avatar" alt="User" onClick={() => navigate('/profile')} style={{ cursor:'pointer' }} />
           <button className="sb-icon-btn sb-icon-btn--danger" onClick={() => navigate('/')} title="Logout">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
           </button>

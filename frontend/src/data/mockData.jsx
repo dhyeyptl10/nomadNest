@@ -1,3 +1,5 @@
+const IMG = (seed, w = 600, h = 400) => `https://picsum.photos/seed/${seed}/${w}/${h}`
+
 export const TRIPS = [
   {
     id: 1,
@@ -6,7 +8,7 @@ export const TRIPS = [
     days: 12,
     status: 'upcoming',
     daysLeft: 12,
-    img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80&fit=crop',
+    img: IMG('bali'),
     color: '#4DB6A9',
   },
   {
@@ -16,7 +18,7 @@ export const TRIPS = [
     days: 10,
     status: 'planning',
     daysLeft: 57,
-    img: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&q=80&fit=crop',
+    img: IMG('santorini'),
     color: '#7B8FD4',
   },
   {
@@ -26,7 +28,7 @@ export const TRIPS = [
     days: 9,
     status: 'planning',
     daysLeft: 107,
-    img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&q=80&fit=crop',
+    img: IMG('kyoto'),
     color: '#E07B7B',
   },
   {
@@ -36,7 +38,7 @@ export const TRIPS = [
     days: 14,
     status: 'wishlist',
     daysLeft: null,
-    img: 'https://images.unsplash.com/photo-1531761535209-180857e963b9?w=600&q=80&fit=crop',
+    img: IMG('patagonia'),
     color: '#82C485',
   },
 ]
@@ -45,7 +47,7 @@ export const STATS = [
   {
     label: 'Countries Visited',
     value: '24',
-    img: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=120&q=80&fit=crop',
+    img: IMG('globe', 120, 120),
     svgIcon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10"/>
