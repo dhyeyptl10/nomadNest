@@ -11,6 +11,7 @@ import Messages     from './pages/Messages'
 import TravelStyle  from './pages/TravelStyle'
 import Settings     from './pages/Settings'
 import Profile      from './pages/Profile'
+import Emergency    from './pages/Emergency'
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/travel-style" element={<TravelStyle />} />
           <Route path="/settings"     element={<Settings />} />
           <Route path="/profile"      element={<Profile />} />
+          <Route path="/emergency"    element={<Emergency />} />
           <Route path="*"             element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

@@ -1,0 +1,288 @@
+/* ═══════════════════════════════════════════════════════
+   EMERGENCY & SOS — NomadNest
+   Premium Safety Interface
+═══════════════════════════════════════════════════════ */
+
+.em-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── SOS SECTION ── */
+.sos-hero {
+  background: var(--surface);
+  padding: 40px;
+  border-radius: var(--r-xl);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.sos-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--red), var(--amber));
+}
+
+.sos-title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-1);
+  margin-bottom: 8px;
+}
+
+.sos-subtitle {
+  color: var(--text-3);
+  font-size: 15px;
+  max-width: 400px;
+  margin-bottom: 40px;
+}
+
+/* ── PULSING SOS BUTTON ── */
+.sos-btn-wrap {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sos-pulse-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--red);
+  opacity: 0.15;
+  animation: sosPulse 2s infinite ease-out;
+}
+
+.sos-pulse-ring-2 {
+  animation-delay: 1s;
+}
+
+.sos-btn {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: var(--red);
+  color: white;
+  border: 8px solid rgba(255,255,255,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 12px 40px rgba(224, 62, 62, 0.4);
+}
+
+.sos-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 50px rgba(224, 62, 62, 0.5);
+}
+
+.sos-btn:active {
+  transform: scale(0.95);
+}
+
+.sos-btn-ico {
+  margin-bottom: 4px;
+}
+
+.sos-btn-txt {
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: 1px;
+}
+
+@keyframes sosPulse {
+  0% { transform: scale(1); opacity: 0.3; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+/* ── GRID LAYOUT ── */
+.em-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .em-grid { grid-template-columns: 1fr; }
+}
+
+/* ── MAP SECTION ── */
+.map-card {
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.map-container-wrap {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+  overflow: hidden;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+}
+
+/* ── HOSPITALS ── */
+.hosp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+}
+
+.hosp-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  background: var(--surface-2);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+}
+
+.hosp-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.hosp-ico {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--red-bg);
+  color: var(--red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hosp-name { font-weight: 600; font-size: 14px; color: var(--text-1); }
+.hosp-dist { font-size: 12px; color: var(--text-3); }
+
+/* ── CONTACTS ── */
+.contacts-card {
+  padding: 24px;
+}
+
+.contacts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.contact-item:last-child { border: none; }
+
+.contact-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--gold-glow);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.contact-details { flex: 1; }
+.contact-name { font-weight: 600; font-size: 14px; }
+.contact-rel { font-size: 12px; color: var(--text-3); }
+
+/* ── ACTION BUTTONS ── */
+.em-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn-msg {
+  background: var(--blue-bg);
+  color: var(--blue);
+  border: 1px solid rgba(59,130,246,0.2);
+}
+
+.action-btn-call {
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1px solid rgba(14,166,110,0.2);
+}
+
+.action-btn:hover { transform: translateY(-2px); }
+
+/* Custom Map Marker */
+.custom-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.marker-dot {
+  width: 12px;
+  height: 12px;
+  background: var(--blue);
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(59,130,246,0.5);
+}
+.marker-pulse {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: var(--blue);
+  opacity: 0.2;
+  border-radius: 50%;
+  animation: sosPulse 1.5s infinite ease-out;
+}
