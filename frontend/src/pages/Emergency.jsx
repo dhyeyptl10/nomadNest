@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import L from 'leaflet'
 import { 
   ShieldAlert, Phone, MessageSquare, Plus, Hospital, 
@@ -7,22 +6,6 @@ import {
 } from 'lucide-react'
 import Sidebar from '../components/Sidebar'
 import './Emergency.css'
-
-// Custom Marker for User Location
-const userIcon = new L.DivIcon({
-  className: 'custom-marker',
-  html: '<div class="marker-pulse"></div><div class="marker-dot"></div>',
-  iconSize: [30, 30],
-  iconAnchor: [15, 15]
-})
-
-// Custom Marker for Hospitals
-const hospitalIcon = new L.Icon({
-  iconUrl: 'https://cdn-icons-png.flaticon.com/512/3063/3063176.png',
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32]
-})
 
 const HOSPITALS = [
   { id: 1, name: 'City Central Hospital', dist: '0.8 km', phone: '+91 80 1234 5678', pos: [12.9716, 77.5946] },
@@ -35,22 +18,19 @@ const CONTACTS = [
   { id: 2, name: 'Priya Patel', rel: 'Partner', phone: '+91 91234 56789', initial: 'P' },
 ]
 
-// Helper to center map on user
-function ChangeView({ center }) {
-  const map = useMap()
-  map.setView(center, 15)
-  return null
-}
-
 export default function Emergency() {
   const [mounted, setMounted] = useState(false)
   const [userPos, setUserPos] = useState([12.9716, 77.5946]) // Default: Bangalore
   const [isSOSActive, setIsSOSActive] = useState(false)
   const [alertMsg, setAlertMsg] = useState(null)
+  const [holdProgress, setHoldProgress] = useState(0)
+  const [isHolding, setIsHolding] = useState(false)
+  
+  const mapRef = useRef(null)
+  const mapInstance = useRef(null)
 
   useEffect(() => {
     setMounted(true)
-    // Try to get real location
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
         setUserPos([position.coords.latitude, position.coords.longitude])
@@ -58,8 +38,80 @@ export default function Emergency() {
     }
   }, [])
 
+  // Direct Leaflet Initialization
+  useEffect(() => {
+    if (mounted && mapRef.current && !mapInstance.current) {
+      mapInstance.current = L.map(mapRef.current).setView(userPos, 15)
+      
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(mapInstance.current)
+
+      // User Marker
+      const userIcon = L.divIcon({
+        className: 'custom-marker',
+        html: '<div class="marker-pulse"></div><div class="marker-dot"></div>',
+        iconSize: [30, 30],
+        iconAnchor: [15, 15]
+      })
+      L.marker(userPos, { icon: userIcon }).addTo(mapInstance.current).bindPopup('You are here')
+
+      // Hospital Markers
+      const hospitalIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/3063/3063176.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      })
+
+      HOSPITALS.forEach(h => {
+        L.marker(h.pos, { icon: hospitalIcon })
+          .addTo(mapInstance.current)
+          .bindPopup(`
+            <div class="popup-content">
+              <strong>${h.name}</strong><br/>
+              ${h.dist} away<br/>
+              <button class="popup-call-btn" onclick="window.location.href='tel:${h.phone}'">Call Now</button>
+            </div>
+          `)
+      })
+    }
+
+    if (mapInstance.current) {
+      mapInstance.current.setView(userPos, 15)
+    }
+
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove()
+        mapInstance.current = null
+      }
+    }
+  }, [mounted, userPos])
+
+  // SOS Hold Logic
+  useEffect(() => {
+    let timer
+    if (isHolding && !isSOSActive) {
+      timer = setInterval(() => {
+        setHoldProgress(p => {
+          if (p >= 100) {
+            triggerSOS()
+            return 0
+          }
+          return p + 2
+        })
+      }, 50)
+    } else {
+      setHoldProgress(0)
+      clearInterval(timer)
+    }
+    return () => clearInterval(timer)
+  }, [isHolding, isSOSActive])
+
   const triggerSOS = () => {
     setIsSOSActive(true)
+    setIsHolding(false)
     setAlertMsg("SOS Signal Sent! Local authorities and emergency contacts have been notified.")
     setTimeout(() => {
       setAlertMsg(null)
@@ -98,27 +150,43 @@ export default function Emergency() {
             
             {/* SOS HERO */}
             <section className="sos-hero">
-              <h2 className="sos-title">Emergency SOS</h2>
-              <p className="sos-subtitle">Press and hold the button for 3 seconds to trigger an emergency alert to all contacts.</p>
+              <div className="sos-hero-info">
+                <h2 className="sos-title">Emergency SOS</h2>
+                <p className="sos-subtitle">Press and hold the button for 3 seconds to trigger an emergency alert. This will notify your emergency contacts and local authorities.</p>
+                
+                {alertMsg && (
+                  <div className="sos-alert-msg animate-fadeUp" style={{ marginTop: '24px' }}>
+                    <AlertTriangle size={20} />
+                    <span>{alertMsg}</span>
+                  </div>
+                )}
+              </div>
               
               <div className="sos-btn-wrap">
-                <div className="sos-pulse-ring"></div>
-                <div className="sos-pulse-ring sos-pulse-ring-2"></div>
+                <svg className="sos-progress-svg" viewBox="0 0 100 100">
+                  <circle className="sos-progress-bg" cx="50" cy="50" r="45" />
+                  <circle 
+                    className="sos-progress-fill" 
+                    cx="50" cy="50" r="45"
+                    style={{ strokeDasharray: 283, strokeDashoffset: 283 - (283 * holdProgress) / 100 }}
+                  />
+                </svg>
+
+                <div className={`sos-pulse-ring ${isHolding ? 'sos-pulse--fast' : ''}`}></div>
+                <div className={`sos-pulse-ring sos-pulse-ring-2 ${isHolding ? 'sos-pulse--fast' : ''}`}></div>
+                
                 <button 
-                  className={`sos-btn ${isSOSActive ? 'sos-btn--active' : ''}`}
-                  onClick={triggerSOS}
+                  className={`sos-btn ${isSOSActive ? 'sos-btn--active' : ''} ${isHolding ? 'sos-btn--holding' : ''}`}
+                  onMouseDown={() => setIsHolding(true)}
+                  onMouseUp={() => setIsHolding(false)}
+                  onMouseLeave={() => setIsHolding(false)}
+                  onTouchStart={() => setIsHolding(true)}
+                  onTouchEnd={() => setIsHolding(false)}
                 >
                   <ShieldAlert size={48} className="sos-btn-ico" />
-                  <span className="sos-btn-txt">SOS</span>
+                  <span className="sos-btn-txt">{isSOSActive ? 'SENT' : 'SOS'}</span>
                 </button>
               </div>
-
-              {alertMsg && (
-                <div className="mt-8 p-4 bg-red-bg text-red rounded-lg flex items-center gap-3 animate-fadeUp">
-                  <AlertTriangle size={20} />
-                  <span className="font-semibold">{alertMsg}</span>
-                </div>
-              )}
             </section>
 
             <div className="em-grid">
@@ -133,31 +201,36 @@ export default function Emergency() {
                   <span className="badge bg-blue-bg text-blue">Live Tracking Active</span>
                 </div>
                 <div className="map-container-wrap">
-                  <MapContainer center={userPos} zoom={15} scrollWheelZoom={false}>
-                    <TileLayer
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                    />
-                    <ChangeView center={userPos} />
-                    <Marker position={userPos} icon={userIcon}>
-                      <Popup>You are here</Popup>
-                    </Marker>
-                    {HOSPITALS.map(h => (
-                      <Marker key={h.id} position={h.pos} icon={hospitalIcon}>
-                        <Popup>
-                          <strong>{h.name}</strong><br />
-                          {h.dist} away<br />
-                          <button onClick={() => handleCall(h.phone)}>Call</button>
-                        </Popup>
-                      </Marker>
-                    ))}
-                  </MapContainer>
+                  <div ref={mapRef} className="full-map" />
                 </div>
               </div>
+
 
               {/* SIDEBAR COL: HOSPITALS & CONTACTS */}
               <div className="flex-col gap-24">
                 
+                {/* EMERGENCY NUMBERS QUICK DIAL */}
+                <div className="card dial-card">
+                  <div className="p-5 border-b border-border">
+                    <span className="sec-title">Quick Dial Services</span>
+                  </div>
+                  <div className="dial-grid">
+                    {[
+                      { lbl: 'Police', num: '100', ico: '👮', color: 'blue' },
+                      { lbl: 'Ambulance', num: '102', ico: '🚑', color: 'red' },
+                      { lbl: 'Fire', num: '101', ico: '🔥', color: 'amber' },
+                      { lbl: 'Women Help', num: '1091', ico: '🛡️', color: 'purple' },
+                    ].map(s => (
+                      <button key={s.num} className={`dial-btn dial-btn--${s.color}`} onClick={() => handleCall(s.num)}>
+                        <span className="dial-ico">{s.ico}</span>
+                        <div className="dial-info">
+                          <span className="dial-num">{s.num}</span>
+                          <span className="dial-lbl">{s.lbl}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 {/* NEARBY HOSPITALS */}
                 <div className="card">
                   <div className="p-5 border-b border-border flex items-center justify-between">
@@ -166,6 +239,9 @@ export default function Emergency() {
                       <span className="sec-title">Nearby Hospitals</span>
                     </div>
                   </div>
+                  <div className="hosp-search-wrap">
+                    <input className="hosp-search-inp" placeholder="Search facilities..." />
+                  </div>
                   <div className="hosp-list">
                     {HOSPITALS.map(h => (
                       <div className="hosp-item" key={h.id}>
@@ -173,7 +249,7 @@ export default function Emergency() {
                           <div className="hosp-ico"><Hospital size={18} /></div>
                           <div>
                             <p className="hosp-name">{h.name}</p>
-                            <p className="hosp-dist">{h.dist} away</p>
+                            <p className="hosp-dist">{h.dist} away · <span className="text-green">Open 24/7</span></p>
                           </div>
                         </div>
                         <button className="btn btn-ghost p-2" onClick={() => handleCall(h.phone)}>
