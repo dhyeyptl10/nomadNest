@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import './LoginPage.css'
 
-const MOUNTAIN_BG = 'https://picsum.photos/seed/mountain/1200/800'
-const BALI_THUMB  = 'https://picsum.photos/seed/bali/300/300'
+/* ── Real travel photos ── */
+const HERO_BG    = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&q=80&auto=format&fit=crop'  // Mountain lake panorama
+const BALI_THUMB = 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=200&h=200&q=80&auto=format&fit=crop'
 
+/* ── SVG icons ── */
 function GoogleIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <svg width="18" height="18" viewBox="0 0 24 24">
       <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
       <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
       <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
@@ -16,7 +18,6 @@ function GoogleIcon() {
     </svg>
   )
 }
-
 function AppleIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -24,43 +25,15 @@ function AppleIcon() {
     </svg>
   )
 }
-
 function EyeIcon({ open }) {
   return open ? (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
     </svg>
   ) : (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
       <line x1="1" y1="1" x2="23" y2="23"/>
-    </svg>
-  )
-}
-
-function MailIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-      <polyline points="22,6 12,13 2,6"/>
-    </svg>
-  )
-}
-
-function LockIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-    </svg>
-  )
-}
-
-function UserIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-      <circle cx="12" cy="7" r="4"/>
     </svg>
   )
 }
@@ -69,15 +42,14 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const { login, register, currentUser } = useAuth()
 
-  const [tab,             setTab]             = useState('signin')
-  const [showPass,        setShowPass]        = useState(false)
-  const [showConfirmPass, setShowConfirmPass] = useState(false)
-  const [mounted,         setMounted]         = useState(false)
-  const [loading,         setLoading]         = useState(false)
-  const [imgLoaded,       setImgLoaded]       = useState(false)
-  const [error,           setError]           = useState('')
-
-  const [form, setForm] = useState({ email: '', password: '', name: '', confirmPassword: '' })
+  const [tab,       setTab]       = useState('signin')
+  const [showPass,  setShowPass]  = useState(false)
+  const [showConf,  setShowConf]  = useState(false)
+  const [mounted,   setMounted]   = useState(false)
+  const [loading,   setLoading]   = useState(false)
+  const [imgLoaded, setImgLoaded] = useState(false)
+  const [error,     setError]     = useState('')
+  const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' })
 
   /* Redirect if already logged in */
   useEffect(() => {
@@ -85,153 +57,126 @@ export default function LoginPage() {
   }, [currentUser, navigate])
 
   useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 50)
-    return () => clearTimeout(timer)
+    const t = setTimeout(() => setMounted(true), 50)
+    return () => clearTimeout(t)
   }, [])
+
+  const setF = (k) => (e) => setForm(p => ({ ...p, [k]: e.target.value }))
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setLoading(true)
-
-    // Artificial small delay for UX
-    await new Promise(r => setTimeout(r, 600))
+    await new Promise(r => setTimeout(r, 550))
 
     if (tab === 'signin') {
-      const result = login(form.email, form.password)
-      if (!result.success) {
-        setError(result.error)
-        setLoading(false)
-        return
-      }
+      const res = login(form.email, form.password)
+      if (!res.success) { setError(res.error); setLoading(false); return }
     } else {
-      if (form.password !== form.confirmPassword) {
-        setError('Passwords do not match.')
-        setLoading(false)
-        return
-      }
-      if (!form.name.trim()) {
-        setError('Please enter your full name.')
-        setLoading(false)
-        return
-      }
-      const result = register(form.name, form.email, form.password)
-      if (!result.success) {
-        setError(result.error)
-        setLoading(false)
-        return
-      }
+      if (!form.name.trim()) { setError('Please enter your full name.'); setLoading(false); return }
+      if (form.password !== form.confirm) { setError('Passwords do not match.'); setLoading(false); return }
+      const res = register(form.name, form.email, form.password)
+      if (!res.success) { setError(res.error); setLoading(false); return }
     }
 
     setLoading(false)
     navigate('/dashboard')
   }
 
-  const handleTabChange = (newTab) => {
-    setTab(newTab)
-    setError('')
-    setForm({ email: '', password: '', name: '', confirmPassword: '' })
-    setShowPass(false)
-    setShowConfirmPass(false)
+  const switchTab = (t) => {
+    setTab(t); setError('')
+    setForm({ name: '', email: '', password: '', confirm: '' })
+    setShowPass(false); setShowConf(false)
   }
+
+  const fillDemo = () => setForm(p => ({ ...p, email: 'ananya@example.com', password: 'password123' }))
 
   return (
     <div className={`login-root ${mounted ? 'mounted' : ''}`}>
 
-      {/* LEFT — Hero panel */}
+      {/* ─── LEFT: Hero Panel ─── */}
       <div className="hero-panel">
         <img
-          src={MOUNTAIN_BG}
-          alt="Mountain landscape"
+          src={HERO_BG}
+          alt="Beautiful travel destination"
           className={`hero-bg ${imgLoaded ? 'loaded' : ''}`}
           onLoad={() => setImgLoaded(true)}
         />
         <div className="hero-overlay" />
 
         {/* Logo */}
-        <div className="logo" style={{ animationDelay: '0.1s' }}>
+        <div className="logo">
           <div className="logo-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="3 18 12 2 21 18"/><path d="M9 18 12 12 15 18"/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="3 18 12 2 21 18"/>
+              <path d="M9 18 12 12 15 18"/>
             </svg>
           </div>
           <div className="logo-text">
-            <span className="logo-name">WANDERLUST</span>
+            <span className="logo-name">NOMADNEST</span>
             <span className="logo-sub">TRAVEL</span>
           </div>
         </div>
 
-        {/* Hero copy */}
+        {/* Hero text — centered vertically */}
         <div className="hero-content">
-          <h1 className="hero-title" style={{ animationDelay: '0.2s' }}>
-            Explore More<br />
-            <span className="hero-title-gold">Live More</span>
+          <div className="hero-tag">✦ Premium Travel Experience</div>
+          <h1 className="hero-title">
+            Explore More.<br />
+            <span className="hero-gold">Live More.</span>
           </h1>
-          <p className="hero-desc" style={{ animationDelay: '0.35s' }}>
-            The world is waiting for you. Start your journey today and collect unforgettable moments.
+          <p className="hero-desc">
+            Plan your dream journeys, discover hidden gems, and create unforgettable memories around the world.
           </p>
-          <ul className="hero-features" style={{ animationDelay: '0.5s' }}>
-            {['Curated destinations worldwide', 'AI-powered trip planning', 'Exclusive member deals'].map((f, i) => (
-              <li key={f} style={{ animationDelay: `${0.5 + i * 0.12}s` }}>
-                <span className="check-icon">
-                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-                    <path d="M2 6l3 3 5-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-                {f}
-              </li>
-            ))}
-          </ul>
+
+          <div className="hero-stats">
+            <div className="h-stat"><span className="h-stat-num">50K+</span><span className="h-stat-lbl">Travelers</span></div>
+            <div className="h-divider" />
+            <div className="h-stat"><span className="h-stat-num">120+</span><span className="h-stat-lbl">Destinations</span></div>
+            <div className="h-divider" />
+            <div className="h-stat"><span className="h-stat-num">4.9★</span><span className="h-stat-lbl">Rating</span></div>
+          </div>
         </div>
 
-        {/* Trip card */}
-        <div className="trip-card" style={{ animationDelay: '0.75s' }}>
+        {/* Trip card — pinned to bottom */}
+        <div className="trip-card">
           <img src={BALI_THUMB} alt="Bali" className="trip-thumb" />
           <div className="trip-info">
             <p className="trip-name">Next Trip: Bali, Indonesia</p>
             <p className="trip-dates">20 May — 02 June 2024 · 12 Days</p>
           </div>
-          <div className="trip-badge">12 Days to go</div>
+          <div className="trip-badge">12 Days</div>
         </div>
       </div>
 
-      {/* RIGHT — Auth panel */}
+      {/* ─── RIGHT: Auth Panel ─── */}
       <div className="auth-panel">
-        <div className="auth-card" style={{ animationDelay: '0.15s' }}>
+        <div className="auth-card">
 
           {/* Tabs */}
           <div className="tabs">
-            {['signin', 'signup'].map(t => (
-              <button
-                key={t}
-                className={`tab-btn ${tab === t ? 'active' : ''}`}
-                onClick={() => handleTabChange(t)}
-                type="button"
-              >
-                {t === 'signin' ? 'Sign In' : 'Create Account'}
-              </button>
-            ))}
+            <button className={`tab-btn ${tab === 'signin' ? 'active' : ''}`} onClick={() => switchTab('signin')}>Sign In</button>
+            <button className={`tab-btn ${tab === 'signup' ? 'active' : ''}`} onClick={() => switchTab('signup')}>Register</button>
           </div>
 
           {/* Heading */}
-          <div className={`auth-heading ${tab}`}>
+          <div className="auth-heading">
             <h2 className="auth-title">
-              {tab === 'signin' ? 'Welcome back, Explorer!' : 'Start your adventure!'}
+              {tab === 'signin' ? 'Welcome back! 👋' : 'Join NomadNest 🌍'}
             </h2>
             <p className="auth-subtitle">
               {tab === 'signin'
-                ? 'Sign in to continue planning your adventures.'
-                : 'Create an account to begin your journey.'}
+                ? 'Sign in to continue your journey'
+                : 'Create your free account today'}
             </p>
           </div>
 
-          {/* Demo hint for sign-in */}
+          {/* Demo hint */}
           {tab === 'signin' && (
             <div className="demo-hint">
-              <span>🎯 Demo: </span>
-              <button type="button" onClick={() => setForm({ ...form, email:'ananya@example.com', password:'password123' })}>
-                Use demo account
-              </button>
+              <span className="demo-badge">DEMO</span>
+              <span>Try the app instantly — </span>
+              <button type="button" onClick={fillDemo}>use demo account</button>
             </div>
           )}
 
@@ -239,7 +184,9 @@ export default function LoginPage() {
           {error && (
             <div className="auth-error">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
               {error}
             </div>
@@ -247,19 +194,13 @@ export default function LoginPage() {
 
           {/* Form */}
           <form className="auth-form" onSubmit={handleSubmit}>
+
             {tab === 'signup' && (
-              <div className="field" key="name-field">
+              <div className="field">
                 <label className="field-label">Full Name</label>
                 <div className="field-wrap">
-                  <span className="field-icon"><UserIcon /></span>
-                  <input
-                    type="text"
-                    className="field-input"
-                    placeholder="Ananya Sharma"
-                    value={form.name}
-                    onChange={e => setForm({ ...form, name: e.target.value })}
-                    required
-                  />
+                  <svg className="field-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <input type="text" className="field-input" placeholder="Ananya Sharma" value={form.name} onChange={setF('name')} required />
                 </div>
               </div>
             )}
@@ -267,52 +208,27 @@ export default function LoginPage() {
             <div className="field">
               <label className="field-label">Email Address</label>
               <div className="field-wrap">
-                <span className="field-icon"><MailIcon /></span>
-                <input
-                  type="email"
-                  className="field-input"
-                  placeholder="ananya@example.com"
-                  value={form.email}
-                  onChange={e => setForm({ ...form, email: e.target.value })}
-                  required
-                />
+                <svg className="field-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <input type="email" className="field-input" placeholder="you@example.com" value={form.email} onChange={setF('email')} required />
               </div>
             </div>
 
             <div className="field">
               <label className="field-label">Password</label>
               <div className="field-wrap">
-                <span className="field-icon"><LockIcon /></span>
-                <input
-                  type={showPass ? 'text' : 'password'}
-                  className="field-input"
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={e => setForm({ ...form, password: e.target.value })}
-                  required
-                />
-                <button type="button" className="eye-btn" onClick={() => setShowPass(v => !v)} tabIndex={-1}>
-                  <EyeIcon open={showPass} />
-                </button>
+                <svg className="field-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input type={showPass ? 'text' : 'password'} className="field-input" placeholder="••••••••" value={form.password} onChange={setF('password')} required />
+                <button type="button" className="eye-btn" onClick={() => setShowPass(v => !v)} tabIndex={-1}><EyeIcon open={showPass} /></button>
               </div>
             </div>
 
             {tab === 'signup' && (
-              <div className="field" key="confirm-field">
+              <div className="field">
                 <label className="field-label">Confirm Password</label>
                 <div className="field-wrap">
-                  <span className="field-icon"><LockIcon /></span>
-                  <input
-                    type={showConfirmPass ? 'text' : 'password'}
-                    className="field-input"
-                    placeholder="••••••••"
-                    value={form.confirmPassword}
-                    onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
-                    required
-                  />
-                  <button type="button" className="eye-btn" onClick={() => setShowConfirmPass(v => !v)} tabIndex={-1}>
-                    <EyeIcon open={showConfirmPass} />
-                  </button>
+                  <svg className="field-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <input type={showConf ? 'text' : 'password'} className="field-input" placeholder="••••••••" value={form.confirm} onChange={setF('confirm')} required />
+                  <button type="button" className="eye-btn" onClick={() => setShowConf(v => !v)} tabIndex={-1}><EyeIcon open={showConf} /></button>
                 </div>
               </div>
             )}
@@ -329,32 +245,23 @@ export default function LoginPage() {
               ) : (
                 <>
                   {tab === 'signin' ? 'Sign In' : 'Create Account'}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-                  </svg>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </>
               )}
             </button>
 
-            {/* Divider */}
             <div className="or-divider"><span>or continue with</span></div>
 
-            {/* Social */}
             <div className="social-row">
               <button type="button" className="social-btn"><GoogleIcon /><span>Google</span></button>
               <button type="button" className="social-btn"><AppleIcon /><span>Apple</span></button>
             </div>
           </form>
 
-          {/* Footer */}
           <p className="auth-footer">
             {tab === 'signin' ? "Don't have an account? " : 'Already have an account? '}
-            <button
-              type="button"
-              className="footer-link"
-              onClick={() => handleTabChange(tab === 'signin' ? 'signup' : 'signin')}
-            >
-              {tab === 'signin' ? 'Sign up' : 'Sign in'}
+            <button type="button" className="footer-link" onClick={() => switchTab(tab === 'signin' ? 'signup' : 'signin')}>
+              {tab === 'signin' ? 'Create one' : 'Sign in'}
             </button>
           </p>
         </div>
