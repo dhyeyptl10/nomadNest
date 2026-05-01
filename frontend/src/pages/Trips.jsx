@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Sidebar from '../components/Sidebar'
-import { useStorage } from '../context/StorageContext'
+import { fetchTrips, createTrip, updateTrip, deleteTrip } from '../store/slices/tripSlice'
 import { useToast } from '../context/ToastContext'
 import { usePageTitle } from '../hooks/usePageTitle'
 import './Trips.css'
@@ -51,7 +52,7 @@ function TripForm({ initial, onSave, onClose }) {
       activities: typeof form.activities === 'string'
         ? form.activities.split(',').map(a => a.trim()).filter(Boolean)
         : form.activities,
-      img: form.img || `https://picsum.photos/seed/${IMG_SEEDS[Math.floor(Math.random()*IMG_SEEDS.length)]}/600/400`,
+      img: form.img || `https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80&auto=format&fit=crop`,
     }
     onSave(trip)
     onClose()
@@ -120,40 +121,41 @@ export default function Trips() {
   const [mounted, setMounted] = useState(false)
   const [tab, setTab] = useState('All')
   const [view, setView] = useState('grid')
-  const [trips, setTrips] = useState([])
   const [showAdd, setShowAdd] = useState(false)
   const [editTrip, setEditTrip] = useState(null)
   const [deleteId, setDeleteId] = useState(null)
-  const { tripsStore } = useStorage()
+  
+  const dispatch = useDispatch()
+  const { trips, loading } = useSelector((state) => state.trips)
   const toast = useToast()
   usePageTitle('My Trips')
 
-  useEffect(() => { const t = setTimeout(() => setMounted(true), 40); return () => clearTimeout(t) }, [])
-
-  // Load from storage on mount + whenever store changes
   useEffect(() => {
-    if (tripsStore) setTrips(tripsStore.getAll())
-  }, [tripsStore])
+    const t = setTimeout(() => setMounted(true), 40)
+    dispatch(fetchTrips())
+    return () => clearTimeout(t)
+  }, [dispatch])
 
-  const refresh = () => setTrips(tripsStore.getAll())
-
-  const handleAdd = (trip) => {
-    tripsStore.add(trip)
-    refresh()
-    toast.success(`✈️ Trip to ${trip.dest} added!`)
+  const handleAdd = async (trip) => {
+    const result = await dispatch(createTrip(trip))
+    if (createTrip.fulfilled.match(result)) {
+      toast.success(`✈️ Trip to ${trip.dest} added!`)
+    }
   }
 
-  const handleEdit = (trip) => {
-    tripsStore.update(trip.id, trip)
-    refresh()
-    toast.success('✏️ Trip updated successfully')
+  const handleEdit = async (trip) => {
+    const result = await dispatch(updateTrip({ id: trip._id, tripData: trip }))
+    if (updateTrip.fulfilled.match(result)) {
+      toast.success('✏️ Trip updated successfully')
+    }
   }
 
-  const handleDelete = (id) => {
-    tripsStore.remove(id)
-    refresh()
-    setDeleteId(null)
-    toast.info('🗑️ Trip removed')
+  const handleDeleteConfirmed = async (id) => {
+    const result = await dispatch(deleteTrip(id))
+    if (deleteTrip.fulfilled.match(result)) {
+      setDeleteId(null)
+      toast.info('🗑️ Trip removed')
+    }
   }
 
   const filtered = trips.filter(t => tab === 'All' || t.status === tab)
@@ -169,13 +171,8 @@ export default function Trips() {
     <div className={`pg-root ${mounted ? 'pg-on' : ''}`}>
       <Sidebar />
       <div className="pg-main">
-
-        {/* Header */}
         <header className="pg-header">
-          <div>
-            <h1 className="pg-title">My Trips</h1>
-            <p className="pg-sub">All your journeys — past, present, and future</p>
-          </div>
+          <div><h1 className="pg-title">My Trips</h1><p className="pg-sub">All your journeys — past, present, and future</p></div>
           <div className="trips-header-r">
             <div className="view-toggle">
               {['grid','list'].map(v => (
@@ -187,86 +184,44 @@ export default function Trips() {
                 </button>
               ))}
             </div>
-            <button className="new-trip-btn" onClick={() => setShowAdd(true)}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              New Trip
-            </button>
+            <button className="new-trip-btn" onClick={() => setShowAdd(true)}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Trip</button>
           </div>
         </header>
 
         <div className="pg-scroll" style={{ padding: '0 24px 32px' }}>
-
-          {/* Summary cards */}
           <div className="trip-summary" style={{ paddingTop: 20 }}>
             {SUMMARY.map((s, i) => (
-              <div className="sum-card" key={s.label} style={{ animationDelay: `${i*0.06}s` }}>
-                <span className="sum-icon">{s.icon}</span>
-                <p className="sum-val">{s.value}</p>
-                <p className="sum-lbl">{s.label}</p>
-              </div>
+              <div className="sum-card" key={s.label} style={{ animationDelay: `${i*0.06}s` }}><span className="sum-icon">{s.icon}</span><p className="sum-val">{s.value}</p><p className="sum-lbl">{s.label}</p></div>
             ))}
           </div>
 
-          {/* Tabs */}
           <div className="trip-tabs">
             {TABS.map(t => (
-              <button key={t} className={`trip-tab ${tab===t?'trip-tab--on':''}`} onClick={() => setTab(t)}>
-                {t}
-                <span className="trip-tab-count">{t==='All' ? trips.length : trips.filter(x=>x.status===t).length}</span>
-              </button>
+              <button key={t} className={`trip-tab ${tab===t?'trip-tab--on':''}`} onClick={() => setTab(t)}>{t}<span className="trip-tab-count">{t==='All' ? trips.length : trips.filter(x=>x.status===t).length}</span></button>
             ))}
           </div>
 
-          {/* Grid or list */}
-          {view === 'grid' ? (
+          {loading ? (
+            <div style={{ textAlign:'center', padding:'100px 0' }}><span className="spinner" /></div>
+          ) : view === 'grid' ? (
             <div className="trips-grid">
               {filtered.map((trip, i) => {
                 const s = STATUS_STYLE[trip.status] || STATUS_STYLE['Upcoming']
                 return (
-                  <div className="trip-card" key={trip.id} style={{ animationDelay: `${i*0.07}s` }}>
+                  <div className="trip-card" key={trip._id} style={{ animationDelay: `${i*0.07}s` }}>
                     <div className="trip-img-wrap">
-                      <img src={trip.img} alt={trip.dest} className="trip-img" />
-                      <div className="trip-status-badge" style={{ background: s.bg, color: s.color }}>
-                        <span className="trip-dot" style={{ background: s.dot }} />
-                        {trip.status}
-                      </div>
-                      {trip.daysLeft && (
-                        <div className="trip-days-chip">{trip.daysLeft} days away</div>
-                      )}
-                      {/* CRUD actions overlay */}
+                      <img src={trip.img || 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&q=80&auto=format&fit=crop'} alt={trip.dest} className="trip-img" />
+                      <div className="trip-status-badge" style={{ background: s.bg, color: s.color }}><span className="trip-dot" style={{ background: s.dot }} />{trip.status}</div>
                       <div className="trip-card-actions">
-                        <button className="tc-action-btn tc-edit" title="Edit" onClick={() => setEditTrip(trip)}>
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        </button>
-                        <button className="tc-action-btn tc-delete" title="Delete" onClick={() => setDeleteId(trip.id)}>
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-                        </button>
+                        <button className="tc-action-btn tc-edit" title="Edit" onClick={() => setEditTrip(trip)}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                        <button className="tc-action-btn tc-delete" title="Delete" onClick={() => setDeleteId(trip._id)}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
                       </div>
                     </div>
                     <div className="trip-body">
-                      <p className="trip-dest">{trip.dest}</p>
-                      <p className="trip-dates">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        {trip.dates} {trip.days ? `· ${trip.days} days` : ''}
-                      </p>
-                      {trip.activities?.length > 0 && (
-                        <div className="trip-activities">
-                          {(Array.isArray(trip.activities) ? trip.activities : trip.activities.split(',')).slice(0,3).map(a => (
-                            <span key={a} className="act-chip">{a.trim()}</span>
-                          ))}
-                        </div>
-                      )}
-                      <div className="trip-budget-row">
-                        <div><p className="trip-budget-lbl">Budget</p><p className="trip-budget-val">{trip.budget || '—'}</p></div>
-                        <div><p className="trip-budget-lbl">Spent</p><p className="trip-budget-val">{trip.spent || '₹0'}</p></div>
-                        <div><p className="trip-budget-lbl">Members</p><p className="trip-budget-val">👥 {trip.members || 1}</p></div>
-                      </div>
-                      <div className="trip-progress-wrap">
-                        <div className="trip-progress-bar">
-                          <div className="trip-progress-fill" style={{ width: `${trip.progress}%` }} />
-                        </div>
-                        <span className="trip-progress-pct">{trip.progress}%</span>
-                      </div>
+                      <p className="trip-dest">{trip.dest}</p><p className="trip-dates"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>{trip.dates} {trip.days ? `· ${trip.days} days` : ''}</p>
+                      {trip.activities?.length > 0 && <div className="trip-activities">{trip.activities.slice(0,3).map(a => <span key={a} className="act-chip">{a}</span>)}</div>}
+                      <div className="trip-budget-row"><div><p className="trip-budget-lbl">Budget</p><p className="trip-budget-val">{trip.budget || '—'}</p></div><div><p className="trip-budget-lbl">Spent</p><p className="trip-budget-val">{trip.spent || '₹0'}</p></div><div><p className="trip-budget-lbl">Members</p><p className="trip-budget-val">👥 {trip.members || 1}</p></div></div>
+                      <div className="trip-progress-wrap"><div className="trip-progress-bar"><div className="trip-progress-fill" style={{ width: `${trip.progress}%` }} /></div><span className="trip-progress-pct">{trip.progress}%</span></div>
                       {trip.notes && <p style={{ fontSize:12, color:'var(--text-3)', marginTop:8 }}>📝 {trip.notes}</p>}
                     </div>
                   </div>
@@ -278,34 +233,14 @@ export default function Trips() {
               {filtered.map((trip, i) => {
                 const s = STATUS_STYLE[trip.status] || STATUS_STYLE['Upcoming']
                 return (
-                  <div className="trip-list-row" key={trip.id} style={{ animationDelay: `${i*0.05}s` }}>
-                    <img src={trip.img} alt={trip.dest} className="trip-list-img" />
-                    <div className="trip-list-info">
-                      <p className="trip-dest">{trip.dest}</p>
-                      <p className="trip-dates" style={{ marginTop: 3 }}>
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        {trip.dates} {trip.days ? `· ${trip.days} days` : ''}
-                      </p>
-                    </div>
-                    <div className="trip-list-meta">
-                      <span className="trip-status-badge" style={{ background: s.bg, color: s.color }}>
-                        <span className="trip-dot" style={{ background: s.dot }} />{trip.status}
-                      </span>
-                      <p className="trip-budget-val" style={{ marginTop: 6, textAlign:'right' }}>{trip.budget || '—'}</p>
-                    </div>
-                    <div className="trip-list-bar">
-                      <div className="trip-progress-bar" style={{ width: 100 }}>
-                        <div className="trip-progress-fill" style={{ width: `${trip.progress}%` }} />
-                      </div>
-                      <span className="trip-progress-pct">{trip.progress}%</span>
-                    </div>
+                  <div className="trip-list-row" key={trip._id} style={{ animationDelay: `${i*0.05}s` }}>
+                    <img src={trip.img || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200&q=80&auto=format&fit=crop'} alt={trip.dest} className="trip-list-img" />
+                    <div className="trip-list-info"><p className="trip-dest">{trip.dest}</p><p className="trip-dates" style={{ marginTop: 3 }}><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>{trip.dates} {trip.days ? `· ${trip.days} days` : ''}</p></div>
+                    <div className="trip-list-meta"><span className="trip-status-badge" style={{ background: s.bg, color: s.color }}><span className="trip-dot" style={{ background: s.dot }} />{trip.status}</span><p className="trip-budget-val" style={{ marginTop: 6, textAlign:'right' }}>{trip.budget || '—'}</p></div>
+                    <div className="trip-list-bar"><div className="trip-progress-bar" style={{ width: 100 }}><div className="trip-progress-fill" style={{ width: `${trip.progress}%` }} /></div><span className="trip-progress-pct">{trip.progress}%</span></div>
                     <div style={{ display:'flex', gap:6 }}>
-                      <button className="tc-action-btn tc-edit" title="Edit" onClick={() => setEditTrip(trip)}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                      </button>
-                      <button className="tc-action-btn tc-delete" title="Delete" onClick={() => setDeleteId(trip.id)}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-                      </button>
+                      <button className="tc-action-btn tc-edit" title="Edit" onClick={() => setEditTrip(trip)}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                      <button className="tc-action-btn tc-delete" title="Delete" onClick={() => setDeleteId(trip._id)}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
                     </div>
                   </div>
                 )
@@ -313,49 +248,16 @@ export default function Trips() {
             </div>
           )}
 
-          {filtered.length === 0 && (
-            <div className="no-results">
-              <span style={{ fontSize: 48 }}>🗺️</span>
-              <p>No {tab.toLowerCase()} trips yet</p>
-              <button onClick={() => tab === 'All' ? setShowAdd(true) : setTab('All')}>
-                {tab === 'All' ? 'Add your first trip' : 'View all trips'}
-              </button>
-            </div>
+          {filtered.length === 0 && !loading && (
+            <div className="no-results"><span style={{ fontSize: 48 }}>🗺️</span><p>No {tab.toLowerCase()} trips yet</p><button onClick={() => tab === 'All' ? setShowAdd(true) : setTab('All')}>{tab === 'All' ? 'Add your first trip' : 'View all trips'}</button></div>
           )}
-
         </div>
       </div>
 
-      {/* Add Modal */}
-      {showAdd && (
-        <Modal title="Plan a New Trip ✈️" onClose={() => setShowAdd(false)}>
-          <TripForm onSave={handleAdd} onClose={() => setShowAdd(false)} />
-        </Modal>
-      )}
-
-      {/* Edit Modal */}
-      {editTrip && (
-        <Modal title="Edit Trip ✏️" onClose={() => setEditTrip(null)}>
-          <TripForm initial={{
-            ...editTrip,
-            activities: Array.isArray(editTrip.activities) ? editTrip.activities.join(', ') : editTrip.activities
-          }} onSave={handleEdit} onClose={() => setEditTrip(null)} />
-        </Modal>
-      )}
-
-      {/* Delete Confirm */}
+      {showAdd && <Modal title="Plan a New Trip ✈️" onClose={() => setShowAdd(false)}><TripForm onSave={handleAdd} onClose={() => setShowAdd(false)} /></Modal>}
+      {editTrip && <Modal title="Edit Trip ✏️" onClose={() => setEditTrip(null)}><TripForm initial={{ ...editTrip, activities: editTrip.activities.join(', ') }} onSave={handleEdit} onClose={() => setEditTrip(null)} /></Modal>}
       {deleteId && (
-        <div className="modal-overlay" onClick={() => setDeleteId(null)}>
-          <div className="confirm-box" onClick={e => e.stopPropagation()}>
-            <span style={{ fontSize:36 }}>🗑️</span>
-            <h3>Delete this trip?</h3>
-            <p>This action cannot be undone.</p>
-            <div className="confirm-actions">
-              <button className="tf-btn-cancel" onClick={() => setDeleteId(null)}>Keep It</button>
-              <button className="tf-btn-danger" onClick={() => handleDelete(deleteId)}>Delete</button>
-            </div>
-          </div>
-        </div>
+        <div className="modal-overlay" onClick={() => setDeleteId(null)}><div className="confirm-box" onClick={e => e.stopPropagation()}><span style={{ fontSize:36 }}>🗑️</span><h3>Delete this trip?</h3><p>This action cannot be undone.</p><div className="confirm-actions"><button className="tf-btn-cancel" onClick={() => setDeleteId(null)}>Keep It</button><button className="tf-btn-danger" onClick={() => handleDeleteConfirmed(deleteId)}>Delete</button></div></div></div>
       )}
     </div>
   )
