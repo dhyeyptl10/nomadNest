@@ -4,21 +4,19 @@ import './Destinations.css'
 
 const CATEGORIES = ['All', 'Beach', 'Mountains', 'City', 'Adventure', 'Culture', 'Wildlife']
 
-const IMG = (seed, w = 600, h = 400) => `https://picsum.photos/seed/${seed}/${w}/${h}`
-
 const DESTINATIONS = [
-  { name: 'Maldives',        country: 'South Asia',   cat: 'Beach',     rating: 4.9, price: '₹1,20,000', reviews: 320, tag: 'Trending',    img: IMG('maldives') },
-  { name: 'Santorini',       country: 'Greece',        cat: 'City',      rating: 4.8, price: '₹95,000',  reviews: 280, tag: 'Popular',     img: IMG('santorini') },
-  { name: 'Swiss Alps',      country: 'Switzerland',   cat: 'Mountains', rating: 4.9, price: '₹1,50,000', reviews: 410, tag: 'Bucket List', img: IMG('swissalps') },
-  { name: 'Bali',            country: 'Indonesia',     cat: 'Culture',   rating: 4.7, price: '₹55,000',  reviews: 520, tag: 'Top Rated',   img: IMG('bali') },
-  { name: 'Machu Picchu',    country: 'Peru',          cat: 'Adventure', rating: 4.8, price: '₹1,10,000', reviews: 195, tag: 'Bucket List', img: IMG('machu') },
-  { name: 'Kyoto',           country: 'Japan',         cat: 'Culture',   rating: 4.9, price: '₹1,30,000', reviews: 370, tag: 'Trending',    img: IMG('kyoto') },
-  { name: 'Serengeti',       country: 'Tanzania',      cat: 'Wildlife',  rating: 4.8, price: '₹2,00,000', reviews: 160, tag: 'Exclusive',   img: IMG('serengeti') },
-  { name: 'Amalfi Coast',    country: 'Italy',         cat: 'Beach',     rating: 4.7, price: '₹1,05,000', reviews: 290, tag: 'Popular',     img: IMG('amalfi') },
-  { name: 'Patagonia',       country: 'Argentina',     cat: 'Adventure', rating: 4.9, price: '₹1,80,000', reviews: 130, tag: 'Hidden Gem',  img: IMG('patagonia') },
-  { name: 'New York',        country: 'USA',           cat: 'City',      rating: 4.6, price: '₹1,40,000', reviews: 640, tag: 'Trending',    img: IMG('newyork') },
-  { name: 'Leh Ladakh',      country: 'India',         cat: 'Mountains', rating: 4.8, price: '₹35,000',  reviews: 480, tag: 'Top Rated',   img: IMG('ladakh') },
-  { name: 'Queenstown',      country: 'New Zealand',   cat: 'Adventure', rating: 4.9, price: '₹1,70,000', reviews: 210, tag: 'Bucket List', img: IMG('queenstown') },
+  { name: 'Maldives',     country: 'South Asia',  cat: 'Beach',     rating: 4.9, price: '₹1,20,000', reviews: 320, tag: 'Trending',    img: 'https://images.unsplash.com/photo-1439405326854-014607f694d7?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Santorini',   country: 'Greece',       cat: 'City',      rating: 4.8, price: '₹95,000',  reviews: 280, tag: 'Popular',     img: 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Swiss Alps',  country: 'Switzerland',  cat: 'Mountains', rating: 4.9, price: '₹1,50,000', reviews: 410, tag: 'Bucket List', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Bali',        country: 'Indonesia',    cat: 'Culture',   rating: 4.7, price: '₹55,000',  reviews: 520, tag: 'Top Rated',   img: 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Machu Picchu',country: 'Peru',          cat: 'Adventure', rating: 4.8, price: '₹1,10,000', reviews: 195, tag: 'Bucket List', img: 'https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Kyoto',       country: 'Japan',         cat: 'Culture',   rating: 4.9, price: '₹1,30,000', reviews: 370, tag: 'Trending',    img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Serengeti',   country: 'Tanzania',      cat: 'Wildlife',  rating: 4.8, price: '₹2,00,000', reviews: 160, tag: 'Exclusive',   img: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Amalfi Coast',country: 'Italy',         cat: 'Beach',     rating: 4.7, price: '₹1,05,000', reviews: 290, tag: 'Popular',     img: 'https://images.unsplash.com/photo-1533104182429-4b31e8ae3e9e?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Patagonia',   country: 'Argentina',     cat: 'Adventure', rating: 4.9, price: '₹1,80,000', reviews: 130, tag: 'Hidden Gem',  img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'New York',    country: 'USA',           cat: 'City',      rating: 4.6, price: '₹1,40,000', reviews: 640, tag: 'Trending',    img: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Leh Ladakh',  country: 'India',         cat: 'Mountains', rating: 4.8, price: '₹35,000',  reviews: 480, tag: 'Top Rated',   img: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Queenstown',  country: 'New Zealand',   cat: 'Adventure', rating: 4.9, price: '₹1,70,000', reviews: 210, tag: 'Bucket List', img: 'https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?w=600&h=420&q=80&auto=format&fit=crop' },
 ]
 
 function StarFill() {
@@ -79,7 +77,7 @@ export default function Destinations() {
 
           {/* Hero banner */}
           <div className="dest-hero">
-            <img src={IMG('landscape', 1400, 500)} alt="Destinations" className="dest-hero-img" />
+            <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1400&h=500&q=80&auto=format&fit=crop" alt="Destinations" className="dest-hero-img" />
             <div className="dest-hero-overlay">
               <h2 className="dest-hero-h">Where do you want to go next?</h2>
               <p className="dest-hero-p">From tropical beaches to alpine peaks — every dream destination awaits</p>

@@ -43,12 +43,10 @@ const STYLES = {
   city:      { title:'🌃 The Urban Nomad', desc:'You love the energy of cities, rooftop bars, street food, and hidden neighborhoods. NYC, Tokyo, or Dubai? All three!' },
 }
 
-const IMG = (seed, w = 600, h = 400) => `https://picsum.photos/seed/${seed}/${w}/${h}`
-
 const SAVED_DESTINATIONS = [
-  { id:1, name:'Maldives', category:'Beach', match:98, img:IMG('maldives', 400, 300) },
-  { id:2, name:'Bali',     category:'Beach', match:95, img:IMG('bali', 400, 300) },
-  { id:3, name:'Phuket',   category:'Beach', match:91, img:IMG('phuket', 400, 300) },
+  { id:1, name:'Maldives', category:'Beach', match:98, img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=300&q=80&auto=format&fit=crop' },
+  { id:2, name:'Bali',     category:'Beach', match:95, img:'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=400&h=300&q=80&auto=format&fit=crop' },
+  { id:3, name:'Phuket',   category:'Beach', match:91, img:'https://images.unsplash.com/photo-1506461883276-594a12b11cf3?w=400&h=300&q=80&auto=format&fit=crop' },
 ]
 
 export default function TravelStyle() {

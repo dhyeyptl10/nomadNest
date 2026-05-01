@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import Sidebar from '../components/Sidebar'
 import { useStorage } from '../context/StorageContext'
+import { useToast } from '../context/ToastContext'
+import { usePageTitle } from '../hooks/usePageTitle'
 import './Trips.css'
 
 const TABS = ['All', 'Upcoming', 'Ongoing', 'Completed', 'Wishlist']
@@ -16,7 +18,7 @@ const IMG_SEEDS = ['bali','santorini','kyoto','goa','maldives','paris','tokyo','
 const BLANK_FORM = {
   dest: '', dates: '', days: '', status: 'Upcoming', budget: '',
   spent: '₹0', members: 2, progress: 0, notes: '',
-  img: 'https://picsum.photos/seed/travel/600/400', activities: '',
+  img: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=600&h=400&q=80&auto=format&fit=crop', activities: '',
 }
 
 function Modal({ title, onClose, children }) {
@@ -123,6 +125,8 @@ export default function Trips() {
   const [editTrip, setEditTrip] = useState(null)
   const [deleteId, setDeleteId] = useState(null)
   const { tripsStore } = useStorage()
+  const toast = useToast()
+  usePageTitle('My Trips')
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 40); return () => clearTimeout(t) }, [])
 
@@ -136,17 +140,20 @@ export default function Trips() {
   const handleAdd = (trip) => {
     tripsStore.add(trip)
     refresh()
+    toast.success(`✈️ Trip to ${trip.dest} added!`)
   }
 
   const handleEdit = (trip) => {
     tripsStore.update(trip.id, trip)
     refresh()
+    toast.success('✏️ Trip updated successfully')
   }
 
   const handleDelete = (id) => {
     tripsStore.remove(id)
     refresh()
     setDeleteId(null)
+    toast.info('🗑️ Trip removed')
   }
 
   const filtered = trips.filter(t => tab === 'All' || t.status === tab)

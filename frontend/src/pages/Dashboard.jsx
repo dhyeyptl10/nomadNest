@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import { useAuth } from '../context/AuthContext'
 import { useStorage } from '../context/StorageContext'
+import { usePageTitle } from '../hooks/usePageTitle'
 import {
   HERO_IMG, HERO_SMALL_A, HERO_SMALL_B,
   REC_IMGS, ADV_MOUNTAIN, ADV_NIGHT_SKY,
-  NEXT_TRIP_THUMB, DEST_IMGS, TRIP_IMGS
+  NEXT_TRIP_THUMB, TRIP_IMGS
 } from '../data/images'
 import './Dashboard.css'
 
@@ -71,6 +72,7 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const { currentUser } = useAuth()
   const { tripsStore } = useStorage()
+  usePageTitle('Dashboard')
 
   const firstName = currentUser?.name?.split(' ')[0] || 'Explorer'
   const allTrips  = tripsStore?.getAll() || []

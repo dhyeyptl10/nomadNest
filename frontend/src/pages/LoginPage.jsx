@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useToast } from '../context/ToastContext'
+import { usePageTitle } from '../hooks/usePageTitle'
 import './LoginPage.css'
 
 /* ── Real travel photos ── */
@@ -41,6 +43,8 @@ function EyeIcon({ open }) {
 export default function LoginPage() {
   const navigate = useNavigate()
   const { login, register, currentUser } = useAuth()
+  const toast = useToast()
+  usePageTitle('Sign In')
 
   const [tab,       setTab]       = useState('signin')
   const [showPass,  setShowPass]  = useState(false)
@@ -80,6 +84,7 @@ export default function LoginPage() {
     }
 
     setLoading(false)
+    toast.success(tab === 'signin' ? `Welcome back! 👋` : 'Account created! Welcome to NomadNest 🌍')
     navigate('/dashboard')
   }
 
@@ -139,13 +144,13 @@ export default function LoginPage() {
         </div>
 
         {/* Trip card — pinned to bottom */}
-        <div className="trip-card">
-          <img src={BALI_THUMB} alt="Bali" className="trip-thumb" />
-          <div className="trip-info">
-            <p className="trip-name">Next Trip: Bali, Indonesia</p>
-            <p className="trip-dates">20 May — 02 June 2024 · 12 Days</p>
+        <div className="lp-trip-card">
+          <img src={BALI_THUMB} alt="Bali" className="lp-trip-thumb" />
+          <div className="lp-trip-info">
+            <p className="lp-trip-name">Next Trip: Bali, Indonesia</p>
+            <p className="lp-trip-dates">20 May — 02 June 2024 · 12 Days</p>
           </div>
-          <div className="trip-badge">12 Days</div>
+          <div className="lp-trip-badge">12 Days 🔥</div>
         </div>
       </div>
 
