@@ -1,5 +1,5 @@
 import { createContext, useContext, useCallback } from 'react'
-import { useAuth } from './AuthContext'
+import { useSelector } from 'react-redux'
 
 const StorageCtx = createContext({})
 
@@ -91,18 +91,13 @@ const VERSION_KEY  = 'wl_data_version'
 function loadData(namespace, userId, defaults) {
   try {
     const key = getKey(namespace, userId)
-
-    // If version changed, wipe old seed data so new defaults are used
     const storedVersion = localStorage.getItem(VERSION_KEY)
     if (storedVersion !== DATA_VERSION) {
-      // Clear all seed keys for this user (only default ones — user-added items are lost, acceptable for demo)
       localStorage.removeItem(key)
       localStorage.setItem(VERSION_KEY, DATA_VERSION)
     }
-
     const stored = localStorage.getItem(key)
     if (stored) return JSON.parse(stored)
-    // First time / after version bump: seed defaults
     localStorage.setItem(key, JSON.stringify(defaults))
     return defaults
   } catch { return defaults }
@@ -123,7 +118,7 @@ function useCRUD(namespace, userId, defaults) {
   const load = useCallback(() => {
     if (!userId) return []
     return loadData(namespace, userId, defaults)
-  }, [namespace, userId])
+  }, [namespace, userId, defaults])
 
   const getAll = useCallback(() => load(), [load])
 
@@ -153,8 +148,8 @@ function useCRUD(namespace, userId, defaults) {
 
 /* ── Provider ── */
 export function StorageProvider({ children }) {
-  const { currentUser } = useAuth()
-  const userId = currentUser?.id
+  const { userInfo } = useSelector((state) => state.auth)
+  const userId = userInfo?._id
 
   const tripsStore    = useCRUD('trips',     userId, DEFAULT_TRIPS)
   const bookingsStore = useCRUD('bookings',  userId, DEFAULT_BOOKINGS)

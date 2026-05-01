@@ -1,7 +1,8 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useTheme } from '../context/ThemeContext'
-import { useAuth } from '../context/AuthContext'
+import { logout } from '../store/slices/authSlice'
 import './Sidebar.css'
 
 const NAV = [
@@ -29,53 +30,33 @@ function NavIcon({ icon }) {
 export default function Sidebar() {
   const navigate   = useNavigate()
   const location   = useLocation()
+  const dispatch   = useDispatch()
   const { dark, toggle } = useTheme()
-  const { currentUser, logout } = useAuth()
+  const { userInfo } = useSelector((state) => state.auth)
   const [collapsed, setCollapsed] = useState(false)
 
-  const displayName = currentUser?.name || 'Traveler'
-  const avatarSrc   = currentUser?.avatar || 'https://picsum.photos/seed/portrait/80/80'
+  const displayName = userInfo?.name || 'Traveler'
+  const avatarSrc   = userInfo?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&q=80&auto=format&fit=crop'
   const firstName   = displayName.split(' ')[0]
 
   const handleLogout = () => {
-    logout()
+    dispatch(logout())
     navigate('/')
   }
 
   return (
     <aside className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''}`}>
-
-      {/* Logo */}
       <div className="sb-logo" onClick={() => navigate('/dashboard')}>
-        <div className="sb-logo-mark">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-            <polygon points="3 18 12 2 21 18"/><path d="M9 18 12 12 15 18"/>
-          </svg>
-        </div>
-        {!collapsed && (
-          <div className="sb-logo-text">
-            <span className="sb-logo-name">NomadNest</span>
-            <span className="sb-logo-sub">Travel</span>
-          </div>
-        )}
-        <button className="sb-collapse-btn" onClick={e => { e.stopPropagation(); setCollapsed(p => !p) }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points={collapsed ? "9 18 15 12 9 6" : "15 18 9 12 15 6"}/>
-          </svg>
-        </button>
+        <div className="sb-logo-mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 18 12 2 21 18"/><path d="M9 18 12 12 15 18"/></svg></div>
+        {!collapsed && <div className="sb-logo-text"><span className="sb-logo-name">NomadNest</span><span className="sb-logo-sub">Travel</span></div>}
+        <button className="sb-collapse-btn" onClick={e => { e.stopPropagation(); setCollapsed(p => !p) }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points={collapsed ? "9 18 15 12 9 6" : "15 18 9 12 15 6"}/></svg></button>
       </div>
 
-      {/* Nav */}
       <nav className="sb-nav">
         {NAV.map(item => {
           const isActive = location.pathname === item.path
           return (
-            <button
-              key={item.id}
-              className={`sb-item ${isActive ? 'sb-item--active' : ''}`}
-              onClick={() => navigate(item.path)}
-              title={collapsed ? item.label : ''}
-            >
+            <button key={item.id} className={`sb-item ${isActive ? 'sb-item--active' : ''}`} onClick={() => navigate(item.path)} title={collapsed ? item.label : ''}>
               <span className="sb-item-icon"><NavIcon icon={item.icon} /></span>
               {!collapsed && <span className="sb-item-label">{item.label}</span>}
               {!collapsed && item.badge && <span className="sb-badge">{item.badge}</span>}
@@ -85,63 +66,20 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Bottom area */}
       {!collapsed && (
         <div className="sb-bottom">
-          {/* Dark mode toggle */}
-          <div className="sb-theme-row">
-            <span className="sb-theme-label">{dark ? '🌙 Dark' : '☀️ Light'} Mode</span>
-            <button className={`sb-toggle ${dark ? 'sb-toggle--on' : ''}`} onClick={toggle}>
-              <span className="sb-toggle-thumb" />
-            </button>
-          </div>
-
-          {/* Referral */}
-          <div className="sb-referral">
-            <div className="sb-referral-icon">🎁</div>
-            <div>
-              <p className="sb-referral-title">Get Extra 10% Off</p>
-              <p className="sb-referral-desc">Refer friends & earn rewards</p>
-            </div>
-            <button className="sb-referral-btn" onClick={() => navigate('/profile')}>→</button>
-          </div>
-
-          {/* Profile row */}
-          <div className="sb-profile" onClick={() => navigate('/profile')}>
-            <img src={avatarSrc} className="sb-avatar" alt={displayName} />
-            <div className="sb-profile-info">
-              <p className="sb-profile-name">{displayName}</p>
-              <p className="sb-profile-role">🌍 Explorer</p>
-            </div>
-          </div>
-
-          {/* Logout */}
-          <button className="sb-logout" onClick={handleLogout}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-              <polyline points="16 17 21 12 16 7"/>
-              <line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-            Logout
-          </button>
+          <div className="sb-theme-row"><span className="sb-theme-label">{dark ? '🌙 Dark' : '☀️ Light'} Mode</span><button className={`sb-toggle ${dark ? 'sb-toggle--on' : ''}`} onClick={toggle}><span className="sb-toggle-thumb" /></button></div>
+          <div className="sb-referral"><div className="sb-referral-icon">🎁</div><div><p className="sb-referral-title">Get Extra 10% Off</p><p className="sb-referral-desc">Refer friends & earn rewards</p></div><button className="sb-referral-btn" onClick={() => navigate('/profile')}>→</button></div>
+          <div className="sb-profile" onClick={() => navigate('/profile')}><img src={avatarSrc} className="sb-avatar" alt={displayName} /><div className="sb-profile-info"><p className="sb-profile-name">{displayName}</p><p className="sb-profile-role">🌍 Explorer</p></div></div>
+          <button className="sb-logout" onClick={handleLogout}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</button>
         </div>
       )}
 
-      {/* Collapsed bottom */}
       {collapsed && (
         <div className="sb-collapsed-bottom">
-          <button className={`sb-icon-btn ${dark ? 'sb-icon-btn--active' : ''}`} onClick={toggle} title="Toggle theme">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              {dark
-                ? <><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></>
-                : <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-              }
-            </svg>
-          </button>
+          <button className={`sb-icon-btn ${dark ? 'sb-icon-btn--active' : ''}`} onClick={toggle} title="Toggle theme"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{dark ? <><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></> : <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>}</svg></button>
           <img src={avatarSrc} className="sb-avatar" alt={firstName} onClick={() => navigate('/profile')} style={{ cursor:'pointer' }} />
-          <button className="sb-icon-btn sb-icon-btn--danger" onClick={handleLogout} title="Logout">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          </button>
+          <button className="sb-icon-btn sb-icon-btn--danger" onClick={handleLogout} title="Logout"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
         </div>
       )}
     </aside>

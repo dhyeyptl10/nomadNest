@@ -5,18 +5,18 @@ import './Destinations.css'
 const CATEGORIES = ['All', 'Beach', 'Mountains', 'City', 'Adventure', 'Culture', 'Wildlife']
 
 const DESTINATIONS = [
-  { name: 'Maldives',     country: 'South Asia',  cat: 'Beach',     rating: 4.9, price: '₹1,20,000', reviews: 320, tag: 'Trending',    img: 'https://images.unsplash.com/photo-1439405326854-014607f694d7?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Maldives',     country: 'South Asia',  cat: 'Beach',     rating: 4.9, price: '₹1,20,000', reviews: 320, tag: 'Trending',    img: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&h=420&q=80&auto=format&fit=crop' },
   { name: 'Santorini',   country: 'Greece',       cat: 'City',      rating: 4.8, price: '₹95,000',  reviews: 280, tag: 'Popular',     img: 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=600&h=420&q=80&auto=format&fit=crop' },
-  { name: 'Swiss Alps',  country: 'Switzerland',  cat: 'Mountains', rating: 4.9, price: '₹1,50,000', reviews: 410, tag: 'Bucket List', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=420&q=80&auto=format&fit=crop' },
-  { name: 'Bali',        country: 'Indonesia',    cat: 'Culture',   rating: 4.7, price: '₹55,000',  reviews: 520, tag: 'Top Rated',   img: 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Swiss Alps',  country: 'Switzerland',  cat: 'Mountains', rating: 4.9, price: '₹1,50,000', reviews: 410, tag: 'Bucket List', img: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Bali',        country: 'Indonesia',    cat: 'Culture',   rating: 4.7, price: '₹55,000',  reviews: 520, tag: 'Top Rated',   img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&h=420&q=80&auto=format&fit=crop' },
   { name: 'Machu Picchu',country: 'Peru',          cat: 'Adventure', rating: 4.8, price: '₹1,10,000', reviews: 195, tag: 'Bucket List', img: 'https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=600&h=420&q=80&auto=format&fit=crop' },
-  { name: 'Kyoto',       country: 'Japan',         cat: 'Culture',   rating: 4.9, price: '₹1,30,000', reviews: 370, tag: 'Trending',    img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&h=420&q=80&auto=format&fit=crop' },
-  { name: 'Serengeti',   country: 'Tanzania',      cat: 'Wildlife',  rating: 4.8, price: '₹2,00,000', reviews: 160, tag: 'Exclusive',   img: 'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Kyoto',       country: 'Japan',         cat: 'Culture',   rating: 4.9, price: '₹1,30,000', reviews: 370, tag: 'Trending',    img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Serengeti',   country: 'Tanzania',      cat: 'Wildlife',  rating: 4.8, price: '₹2,00,000', reviews: 160, tag: 'Exclusive',   img: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=600&h=420&q=80&auto=format&fit=crop' },
   { name: 'Amalfi Coast',country: 'Italy',         cat: 'Beach',     rating: 4.7, price: '₹1,05,000', reviews: 290, tag: 'Popular',     img: 'https://images.unsplash.com/photo-1533104182429-4b31e8ae3e9e?w=600&h=420&q=80&auto=format&fit=crop' },
-  { name: 'Patagonia',   country: 'Argentina',     cat: 'Adventure', rating: 4.9, price: '₹1,80,000', reviews: 130, tag: 'Hidden Gem',  img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&h=420&q=80&auto=format&fit=crop' },
-  { name: 'New York',    country: 'USA',           cat: 'City',      rating: 4.6, price: '₹1,40,000', reviews: 640, tag: 'Trending',    img: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&h=420&q=80&auto=format&fit=crop' },
-  { name: 'Leh Ladakh',  country: 'India',         cat: 'Mountains', rating: 4.8, price: '₹35,000',  reviews: 480, tag: 'Top Rated',   img: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=420&q=80&auto=format&fit=crop' },
-  { name: 'Queenstown',  country: 'New Zealand',   cat: 'Adventure', rating: 4.9, price: '₹1,70,000', reviews: 210, tag: 'Bucket List', img: 'https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Patagonia',   country: 'Argentina',     cat: 'Adventure', rating: 4.9, price: '₹1,80,000', reviews: 130, tag: 'Hidden Gem',  img: 'https://images.unsplash.com/photo-1551818255-e6e10975bc17?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'New York',    country: 'USA',           cat: 'City',      rating: 4.6, price: '₹1,40,000', reviews: 640, tag: 'Trending',    img: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Leh Ladakh',  country: 'India',         cat: 'Mountains', rating: 4.8, price: '₹35,000',  reviews: 480, tag: 'Top Rated',   img: 'https://images.unsplash.com/photo-1581791538302-03537b9c97bf?w=600&h=420&q=80&auto=format&fit=crop' },
+  { name: 'Queenstown',  country: 'New Zealand',   cat: 'Adventure', rating: 4.9, price: '₹1,70,000', reviews: 210, tag: 'Bucket List', img: 'https://images.unsplash.com/photo-1589802829985-817e51181b92?w=600&h=420&q=80&auto=format&fit=crop' },
 ]
 
 function StarFill() {
@@ -53,104 +53,20 @@ export default function Destinations() {
     <div className={`pg-root ${mounted ? 'pg-on' : ''}`}>
       <Sidebar />
       <div className="pg-main">
-
-        {/* Header */}
         <header className="pg-header">
-          <div>
-            <h1 className="pg-title">Destinations</h1>
-            <p className="pg-sub">Explore {DESTINATIONS.length} handpicked destinations worldwide</p>
-          </div>
+          <div><h1 className="pg-title">Destinations</h1><p className="pg-sub">Explore {DESTINATIONS.length} handpicked destinations worldwide</p></div>
           <div className="pg-header-r">
-            <div className="pg-search">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input placeholder="Search destinations..." value={search} onChange={e => setSearch(e.target.value)} />
-            </div>
-            <select className="pg-sort" value={sort} onChange={e => setSort(e.target.value)}>
-              <option value="rating">Top Rated</option>
-              <option value="price">Price: Low</option>
-              <option value="reviews">Most Reviews</option>
-            </select>
+            <div className="pg-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search destinations..." value={search} onChange={e => setSearch(e.target.value)} /></div>
+            <select className="pg-sort" value={sort} onChange={e => setSort(e.target.value)}><option value="rating">Top Rated</option><option value="price">Price: Low</option><option value="reviews">Most Reviews</option></select>
           </div>
         </header>
 
         <div className="pg-scroll">
-
-          {/* Hero banner */}
-          <div className="dest-hero">
-            <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1400&h=500&q=80&auto=format&fit=crop" alt="Destinations" className="dest-hero-img" />
-            <div className="dest-hero-overlay">
-              <h2 className="dest-hero-h">Where do you want to go next?</h2>
-              <p className="dest-hero-p">From tropical beaches to alpine peaks — every dream destination awaits</p>
-              <div className="dest-hero-stats">
-                <div className="dest-stat"><span className="dest-stat-num">50+</span><span className="dest-stat-lbl">Countries</span></div>
-                <div className="dest-stat-div"/>
-                <div className="dest-stat"><span className="dest-stat-num">200+</span><span className="dest-stat-lbl">Destinations</span></div>
-                <div className="dest-stat-div"/>
-                <div className="dest-stat"><span className="dest-stat-num">10k+</span><span className="dest-stat-lbl">Happy Travelers</span></div>
-              </div>
-            </div>
-          </div>
-
-          {/* Category pills */}
-          <div className="cat-row">
-            {CATEGORIES.map(c => (
-              <button key={c} className={`cat-pill ${activecat === c ? 'cat-pill--on' : ''}`} onClick={() => setActivecat(c)}>{c}</button>
-            ))}
-          </div>
-
-          {/* Results count */}
-          <div className="results-bar">
-            <p className="results-count">{filtered.length} destinations found</p>
-          </div>
-
-          {/* Grid */}
-          <div className="dest-grid">
-            {filtered.map((dest, i) => {
-              const tagStyle = TAG_COLORS[dest.tag] || {}
-              return (
-                <div className="dest-card" key={dest.name} style={{ animationDelay: `${i * 0.05}s` }}>
-                  <div className="dest-img-wrap">
-                    <img src={dest.img} alt={dest.name} className="dest-img" />
-                    <div className="dest-tag-wrap">
-                      <span className="dest-tag" style={{ background: tagStyle.bg, color: tagStyle.color }}>{dest.tag}</span>
-                    </div>
-                    <button className={`dest-heart ${liked[i] ? 'dest-heart--on' : ''}`} onClick={() => setLiked(p => ({ ...p, [i]: !p[i] }))}>
-                      <HeartFilled on={liked[i]} />
-                    </button>
-                  </div>
-                  <div className="dest-info">
-                    <div className="dest-name-row">
-                      <div>
-                        <p className="dest-name">{dest.name}</p>
-                        <p className="dest-country">
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                          {dest.country}
-                        </p>
-                      </div>
-                      <p className="dest-price">{dest.price}</p>
-                    </div>
-                    <div className="dest-bottom">
-                      <div className="dest-rating">
-                        <StarFill />
-                        <span className="dest-score">{dest.rating}</span>
-                        <span className="dest-rev">({dest.reviews})</span>
-                      </div>
-                      <button className="dest-btn">Explore →</button>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-
-          {filtered.length === 0 && (
-            <div className="no-results">
-              <span style={{ fontSize: 48 }}>🔍</span>
-              <p>No destinations found for "{search}"</p>
-              <button onClick={() => { setSearch(''); setActivecat('All') }}>Clear filters</button>
-            </div>
-          )}
-
+          <div className="dest-hero"><img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1400&h=500&q=80&auto=format&fit=crop" alt="Destinations" className="dest-hero-img" /><div className="dest-hero-overlay"><h2 className="dest-hero-h">Where do you want to go next?</h2><p className="dest-hero-p">From tropical beaches to alpine peaks — every dream destination awaits</p><div className="dest-hero-stats"><div className="dest-stat"><span className="dest-stat-num">50+</span><span className="dest-stat-lbl">Countries</span></div><div className="dest-stat-div"/><div className="dest-stat"><span className="dest-stat-num">200+</span><span className="dest-stat-lbl">Destinations</span></div><div className="dest-stat-div"/><div className="dest-stat"><span className="dest-stat-num">10k+</span><span className="dest-stat-lbl">Happy Travelers</span></div></div></div></div>
+          <div className="cat-row">{CATEGORIES.map(c => (<button key={c} className={`cat-pill ${activecat === c ? 'cat-pill--on' : ''}`} onClick={() => setActivecat(c)}>{c}</button>))}</div>
+          <div className="results-bar"><p className="results-count">{filtered.length} destinations found</p></div>
+          <div className="dest-grid">{filtered.map((dest, i) => { const tagStyle = TAG_COLORS[dest.tag] || {}; return (<div className="dest-card" key={dest.name} style={{ animationDelay: `${i * 0.05}s` }}><div className="dest-img-wrap"><img src={dest.img} alt={dest.name} className="dest-img" /><div className="dest-tag-wrap"><span className="dest-tag" style={{ background: tagStyle.bg, color: tagStyle.color }}>{dest.tag}</span></div><button className={`dest-heart ${liked[dest.name] ? 'dest-heart--on' : ''}`} onClick={() => setLiked(p => ({ ...p, [dest.name]: !p[dest.name] }))}><HeartFilled on={liked[dest.name]} /></button></div><div className="dest-info"><div className="dest-name-row"><div><p className="dest-name">{dest.name}</p><p className="dest-country"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>{dest.country}</p></div><p className="dest-price">{dest.price}</p></div><div className="dest-bottom"><div className="dest-rating"><StarFill /><span className="dest-score">{dest.rating}</span><span className="dest-rev">({dest.reviews})</span></div><button className="dest-btn">Explore →</button></div></div></div>) })}</div>
+          {filtered.length === 0 && (<div className="no-results"><span style={{ fontSize: 48 }}>🔍</span><p>No destinations found for "{search}"</p><button onClick={() => { setSearch(''); setActivecat('All') }}>Clear filters</button></div>)}
         </div>
       </div>
     </div>
