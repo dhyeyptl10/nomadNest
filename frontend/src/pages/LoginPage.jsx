@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useDispatch, useSelector } from 'react-redux'
+import { useFormik } from 'formik'
+import * as Yup from 'yup'
+import { login, register, clearError } from '../store/slices/authSlice'
 import { useToast } from '../context/ToastContext'
 import { usePageTitle } from '../hooks/usePageTitle'
 import './LoginPage.css'
 
 /* ── Real travel photos ── */
-const HERO_BG    = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&q=80&auto=format&fit=crop'  // Mountain lake panorama
+const HERO_BG    = 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&q=80&auto=format&fit=crop'
 const BALI_THUMB = 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=200&h=200&q=80&auto=format&fit=crop'
 
 /* ── SVG icons ── */
@@ -42,64 +45,70 @@ function EyeIcon({ open }) {
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const { login, register, currentUser } = useAuth()
+  const dispatch = useDispatch()
   const toast = useToast()
   usePageTitle('Sign In')
+
+  const { userInfo, loading, error } = useSelector((state) => state.auth)
 
   const [tab,       setTab]       = useState('signin')
   const [showPass,  setShowPass]  = useState(false)
   const [showConf,  setShowConf]  = useState(false)
   const [mounted,   setMounted]   = useState(false)
-  const [loading,   setLoading]   = useState(false)
   const [imgLoaded, setImgLoaded] = useState(false)
-  const [error,     setError]     = useState('')
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' })
 
-  /* Redirect if already logged in */
   useEffect(() => {
-    if (currentUser) navigate('/dashboard', { replace: true })
-  }, [currentUser, navigate])
+    if (userInfo) navigate('/dashboard', { replace: true })
+  }, [userInfo, navigate])
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 50)
     return () => clearTimeout(t)
   }, [])
 
-  const setF = (k) => (e) => setForm(p => ({ ...p, [k]: e.target.value }))
+  const validationSchema = Yup.object({
+    email: Yup.string().email('Invalid email address').required('Required'),
+    password: Yup.string().min(6, 'Must be at least 6 characters').required('Required'),
+    ...(tab === 'signup' && {
+      name: Yup.string().required('Required'),
+      confirm: Yup.string()
+        .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        .required('Required'),
+    }),
+  })
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
-    await new Promise(r => setTimeout(r, 550))
-
-    if (tab === 'signin') {
-      const res = login(form.email, form.password)
-      if (!res.success) { setError(res.error); setLoading(false); return }
-    } else {
-      if (!form.name.trim()) { setError('Please enter your full name.'); setLoading(false); return }
-      if (form.password !== form.confirm) { setError('Passwords do not match.'); setLoading(false); return }
-      const res = register(form.name, form.email, form.password)
-      if (!res.success) { setError(res.error); setLoading(false); return }
-    }
-
-    setLoading(false)
-    toast.success(tab === 'signin' ? `Welcome back! 👋` : 'Account created! Welcome to NomadNest 🌍')
-    navigate('/dashboard')
-  }
+  const formik = useFormik({
+    initialValues: { name: '', email: '', password: '', confirm: '' },
+    validationSchema,
+    onSubmit: async (values) => {
+      if (tab === 'signin') {
+        const result = await dispatch(login({ email: values.email, password: values.password }))
+        if (login.fulfilled.match(result)) {
+          toast.success('Welcome back! 👋')
+        }
+      } else {
+        const result = await dispatch(register({ name: values.name, email: values.email, password: values.password }))
+        if (register.fulfilled.match(result)) {
+          toast.success('Account created! Welcome to NomadNest 🌍')
+        }
+      }
+    },
+  })
 
   const switchTab = (t) => {
-    setTab(t); setError('')
-    setForm({ name: '', email: '', password: '', confirm: '' })
+    setTab(t)
+    dispatch(clearError())
+    formik.resetForm()
     setShowPass(false); setShowConf(false)
   }
 
-  const fillDemo = () => setForm(p => ({ ...p, email: 'ananya@example.com', password: 'password123' }))
+  const fillDemo = () => {
+    formik.setFieldValue('email', 'ananya@example.com')
+    formik.setFieldValue('password', 'password123')
+  }
 
   return (
     <div className={`login-root ${mounted ? 'mounted' : ''}`}>
-
-      {/* ─── LEFT: Hero Panel ─── */}
       <div className="hero-panel">
         <img
           src={HERO_BG}
@@ -108,105 +117,68 @@ export default function LoginPage() {
           onLoad={() => setImgLoaded(true)}
         />
         <div className="hero-overlay" />
-
-        {/* Logo */}
         <div className="logo">
           <div className="logo-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="3 18 12 2 21 18"/>
-              <path d="M9 18 12 12 15 18"/>
+              <polygon points="3 18 12 2 21 18"/><path d="M9 18 12 12 15 18"/>
             </svg>
           </div>
-          <div className="logo-text">
-            <span className="logo-name">NOMADNEST</span>
-            <span className="logo-sub">TRAVEL</span>
-          </div>
+          <div className="logo-text"><span className="logo-name">NOMADNEST</span><span className="logo-sub">TRAVEL</span></div>
         </div>
-
-        {/* Hero text — centered vertically */}
         <div className="hero-content">
           <div className="hero-tag">✦ Premium Travel Experience</div>
-          <h1 className="hero-title">
-            Explore More.<br />
-            <span className="hero-gold">Live More.</span>
-          </h1>
-          <p className="hero-desc">
-            Plan your dream journeys, discover hidden gems, and create unforgettable memories around the world.
-          </p>
-
+          <h1 className="hero-title">Explore More.<br /><span className="hero-gold">Live More.</span></h1>
+          <p className="hero-desc">Plan your dream journeys, discover hidden gems, and create unforgettable memories around the world.</p>
           <div className="hero-stats">
             <div className="h-stat"><span className="h-stat-num">50K+</span><span className="h-stat-lbl">Travelers</span></div>
-            <div className="h-divider" />
-            <div className="h-stat"><span className="h-stat-num">120+</span><span className="h-stat-lbl">Destinations</span></div>
-            <div className="h-divider" />
-            <div className="h-stat"><span className="h-stat-num">4.9★</span><span className="h-stat-lbl">Rating</span></div>
+            <div className="h-divider" /><div className="h-stat"><span className="h-stat-num">120+</span><span className="h-stat-lbl">Destinations</span></div>
+            <div className="h-divider" /><div className="h-stat"><span className="h-stat-num">4.9★</span><span className="h-stat-lbl">Rating</span></div>
           </div>
         </div>
-
-        {/* Trip card — pinned to bottom */}
         <div className="lp-trip-card">
           <img src={BALI_THUMB} alt="Bali" className="lp-trip-thumb" />
-          <div className="lp-trip-info">
-            <p className="lp-trip-name">Next Trip: Bali, Indonesia</p>
-            <p className="lp-trip-dates">20 May — 02 June 2024 · 12 Days</p>
-          </div>
+          <div className="lp-trip-info"><p className="lp-trip-name">Next Trip: Bali, Indonesia</p><p className="lp-trip-dates">20 May — 02 June 2024 · 12 Days</p></div>
           <div className="lp-trip-badge">12 Days 🔥</div>
         </div>
       </div>
 
-      {/* ─── RIGHT: Auth Panel ─── */}
       <div className="auth-panel">
         <div className="auth-card">
-
-          {/* Tabs */}
           <div className="tabs">
             <button className={`tab-btn ${tab === 'signin' ? 'active' : ''}`} onClick={() => switchTab('signin')}>Sign In</button>
             <button className={`tab-btn ${tab === 'signup' ? 'active' : ''}`} onClick={() => switchTab('signup')}>Register</button>
           </div>
 
-          {/* Heading */}
           <div className="auth-heading">
-            <h2 className="auth-title">
-              {tab === 'signin' ? 'Welcome back! 👋' : 'Join NomadNest 🌍'}
-            </h2>
-            <p className="auth-subtitle">
-              {tab === 'signin'
-                ? 'Sign in to continue your journey'
-                : 'Create your free account today'}
-            </p>
+            <h2 className="auth-title">{tab === 'signin' ? 'Welcome back! 👋' : 'Join NomadNest 🌍'}</h2>
+            <p className="auth-subtitle">{tab === 'signin' ? 'Sign in to continue your journey' : 'Create your free account today'}</p>
           </div>
 
-          {/* Demo hint */}
           {tab === 'signin' && (
             <div className="demo-hint">
-              <span className="demo-badge">DEMO</span>
-              <span>Try the app instantly — </span>
+              <span className="demo-badge">DEMO</span><span>Try the app instantly — </span>
               <button type="button" onClick={fillDemo}>use demo account</button>
             </div>
           )}
 
-          {/* Error */}
           {error && (
             <div className="auth-error">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
               {error}
             </div>
           )}
 
-          {/* Form */}
-          <form className="auth-form" onSubmit={handleSubmit}>
-
+          <form className="auth-form" onSubmit={formik.handleSubmit}>
             {tab === 'signup' && (
               <div className="field">
                 <label className="field-label">Full Name</label>
                 <div className="field-wrap">
                   <svg className="field-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  <input type="text" className="field-input" placeholder="Ananya Sharma" value={form.name} onChange={setF('name')} required />
+                  <input type="text" name="name" className={`field-input ${formik.touched.name && formik.errors.name ? 'error' : ''}`} placeholder="Ananya Sharma" {...formik.getFieldProps('name')} />
                 </div>
+                {formik.touched.name && formik.errors.name && <p className="field-error">{formik.errors.name}</p>}
               </div>
             )}
 
@@ -214,17 +186,19 @@ export default function LoginPage() {
               <label className="field-label">Email Address</label>
               <div className="field-wrap">
                 <svg className="field-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                <input type="email" className="field-input" placeholder="you@example.com" value={form.email} onChange={setF('email')} required />
+                <input type="email" name="email" className={`field-input ${formik.touched.email && formik.errors.email ? 'error' : ''}`} placeholder="you@example.com" {...formik.getFieldProps('email')} />
               </div>
+              {formik.touched.email && formik.errors.email && <p className="field-error">{formik.errors.email}</p>}
             </div>
 
             <div className="field">
               <label className="field-label">Password</label>
               <div className="field-wrap">
                 <svg className="field-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                <input type={showPass ? 'text' : 'password'} className="field-input" placeholder="••••••••" value={form.password} onChange={setF('password')} required />
+                <input type={showPass ? 'text' : 'password'} name="password" className={`field-input ${formik.touched.password && formik.errors.password ? 'error' : ''}`} placeholder="••••••••" {...formik.getFieldProps('password')} />
                 <button type="button" className="eye-btn" onClick={() => setShowPass(v => !v)} tabIndex={-1}><EyeIcon open={showPass} /></button>
               </div>
+              {formik.touched.password && formik.errors.password && <p className="field-error">{formik.errors.password}</p>}
             </div>
 
             {tab === 'signup' && (
@@ -232,31 +206,20 @@ export default function LoginPage() {
                 <label className="field-label">Confirm Password</label>
                 <div className="field-wrap">
                   <svg className="field-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  <input type={showConf ? 'text' : 'password'} className="field-input" placeholder="••••••••" value={form.confirm} onChange={setF('confirm')} required />
+                  <input type={showConf ? 'text' : 'password'} name="confirm" className={`field-input ${formik.touched.confirm && formik.errors.confirm ? 'error' : ''}`} placeholder="••••••••" {...formik.getFieldProps('confirm')} />
                   <button type="button" className="eye-btn" onClick={() => setShowConf(v => !v)} tabIndex={-1}><EyeIcon open={showConf} /></button>
                 </div>
+                {formik.touched.confirm && formik.errors.confirm && <p className="field-error">{formik.errors.confirm}</p>}
               </div>
             )}
 
-            {tab === 'signin' && (
-              <div className="forgot-row">
-                <button type="button" className="forgot-btn">Forgot password?</button>
-              </div>
-            )}
+            {tab === 'signin' && <div className="forgot-row"><button type="button" className="forgot-btn">Forgot password?</button></div>}
 
             <button type="submit" className={`submit-btn ${loading ? 'loading' : ''}`} disabled={loading}>
-              {loading ? (
-                <span className="spinner" />
-              ) : (
-                <>
-                  {tab === 'signin' ? 'Sign In' : 'Create Account'}
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                </>
-              )}
+              {loading ? <span className="spinner" /> : <>{tab === 'signin' ? 'Sign In' : 'Create Account'}<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></>}
             </button>
 
             <div className="or-divider"><span>or continue with</span></div>
-
             <div className="social-row">
               <button type="button" className="social-btn"><GoogleIcon /><span>Google</span></button>
               <button type="button" className="social-btn"><AppleIcon /><span>Apple</span></button>
@@ -265,9 +228,7 @@ export default function LoginPage() {
 
           <p className="auth-footer">
             {tab === 'signin' ? "Don't have an account? " : 'Already have an account? '}
-            <button type="button" className="footer-link" onClick={() => switchTab(tab === 'signin' ? 'signup' : 'signin')}>
-              {tab === 'signin' ? 'Create one' : 'Sign in'}
-            </button>
+            <button type="button" className="footer-link" onClick={() => switchTab(tab === 'signin' ? 'signup' : 'signin')}>{tab === 'signin' ? 'Create one' : 'Sign in'}</button>
           </p>
         </div>
       </div>
