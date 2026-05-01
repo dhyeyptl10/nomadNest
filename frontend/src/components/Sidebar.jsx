@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useState } from 'react'
 import { useTheme } from '../context/ThemeContext'
+import { useAuth } from '../context/AuthContext'
 import './Sidebar.css'
 
 const NAV = [
@@ -26,10 +27,20 @@ function NavIcon({ icon }) {
 }
 
 export default function Sidebar() {
-  const navigate = useNavigate()
-  const location = useLocation()
+  const navigate   = useNavigate()
+  const location   = useLocation()
   const { dark, toggle } = useTheme()
+  const { currentUser, logout } = useAuth()
   const [collapsed, setCollapsed] = useState(false)
+
+  const displayName = currentUser?.name || 'Traveler'
+  const avatarSrc   = currentUser?.avatar || 'https://picsum.photos/seed/portrait/80/80'
+  const firstName   = displayName.split(' ')[0]
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
 
   return (
     <aside className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''}`}>
@@ -97,19 +108,15 @@ export default function Sidebar() {
 
           {/* Profile row */}
           <div className="sb-profile" onClick={() => navigate('/profile')}>
-            <img
-              src="https://picsum.photos/seed/portrait/80/80"
-              className="sb-avatar"
-              alt="Ananya"
-            />
+            <img src={avatarSrc} className="sb-avatar" alt={displayName} />
             <div className="sb-profile-info">
-              <p className="sb-profile-name">Ananya Sharma</p>
-              <p className="sb-profile-role">🌍 Explorer · 24 countries</p>
+              <p className="sb-profile-name">{displayName}</p>
+              <p className="sb-profile-role">🌍 Explorer</p>
             </div>
           </div>
 
           {/* Logout */}
-          <button className="sb-logout" onClick={() => navigate('/')}>
+          <button className="sb-logout" onClick={handleLogout}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
               <polyline points="16 17 21 12 16 7"/>
@@ -131,8 +138,8 @@ export default function Sidebar() {
               }
             </svg>
           </button>
-          <img src="https://picsum.photos/seed/portrait/80/80" className="sb-avatar" alt="User" onClick={() => navigate('/profile')} style={{ cursor:'pointer' }} />
-          <button className="sb-icon-btn sb-icon-btn--danger" onClick={() => navigate('/')} title="Logout">
+          <img src={avatarSrc} className="sb-avatar" alt={firstName} onClick={() => navigate('/profile')} style={{ cursor:'pointer' }} />
+          <button className="sb-icon-btn sb-icon-btn--danger" onClick={handleLogout} title="Logout">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
           </button>
         </div>

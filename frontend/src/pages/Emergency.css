@@ -3,6 +3,118 @@
    Premium Safety Interface
 ═══════════════════════════════════════════════════════ */
 
+/* ── Utility classes used in JSX ── */
+.flex-col  { display: flex; flex-direction: column; }
+.gap-24    { gap: 24px; }
+.flex      { display: flex; }
+.gap-12    { gap: 12px; }
+.gap-3     { gap: 12px; }
+.gap-2     { gap: 8px; }
+.items-center  { align-items: center; }
+.justify-between { justify-content: space-between; }
+.p-5       { padding: 20px; }
+.p-2       { padding: 8px; }
+.p-1       { padding: 4px; }
+.border-b  { border-bottom: 1px solid var(--border); }
+.border-border { border-color: var(--border); }
+.text-blue   { color: var(--blue, #3B82F6); }
+.text-red    { color: var(--red, #E03E3E); }
+.text-green  { color: var(--green, #0EA66E); font-weight: 600; }
+.text-gold   { color: var(--gold, #D4A843); }
+.bg-blue-bg  { background: var(--blue-bg, rgba(59,130,246,0.1)); }
+.badge {
+  font-size: 11px; font-weight: 700; padding: 4px 10px;
+  border-radius: var(--r-full); display: inline-flex; align-items: center;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+/* ── SOS Pulse Ring 2 (secondary ring, needed for stagger) ── */
+.sos-pulse-ring-2 {
+  position: absolute;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: var(--red);
+  opacity: 0.08;
+  animation: sosPulse 2s 0.6s infinite ease-out;
+}
+
+/* ── Button reset ── */
+.btn {
+  border: none; background: transparent; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-body); font-size: 13.5px; font-weight: 600;
+  border-radius: var(--r-md); transition: all 0.2s; color: var(--text-1);
+}
+.btn-ghost { background: var(--surface-2); }
+.btn-ghost:hover { background: var(--surface-3); }
+.btn-outline {
+  background: var(--surface); border: 1.5px solid var(--border);
+  padding: 9px 18px; color: var(--text-1);
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── Modal shared ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; z-index: 1000;
+  animation: fadeIn 0.2s ease both;
+}
+.modal-box {
+  background: var(--surface); border-radius: var(--r-xl);
+  border: 1px solid var(--border); box-shadow: var(--shadow-xl);
+  width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto;
+  animation: slideUp 0.25s var(--ease) both; margin: 16px;
+}
+.modal-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px 0;
+}
+.modal-title { font-size: 18px; font-weight: 700; color: var(--text-1); }
+.modal-close {
+  width: 32px; height: 32px; border: none; background: var(--surface-2);
+  border-radius: 8px; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; color: var(--text-3); transition: all 0.15s;
+}
+.modal-close:hover { background: var(--surface-3); color: var(--text-1); }
+.trip-form { padding: 20px 24px 24px; }
+.tf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.tf-full { grid-column: 1 / -1; }
+.tf-field { display: flex; flex-direction: column; gap: 6px; }
+.tf-field label { font-size: 12.5px; font-weight: 600; color: var(--text-2); }
+.tf-field input, .tf-field select, .tf-field textarea {
+  padding: 10px 14px; border: 1.5px solid var(--border); border-radius: var(--r-md);
+  font-size: 13.5px; font-family: var(--font-body); color: var(--text-1);
+  background: var(--surface-2); outline: none; transition: border-color 0.2s;
+}
+.tf-field input:focus, .tf-field select:focus { border-color: var(--gold); }
+.tf-actions { display: flex; gap: 12px; justify-content: flex-end; }
+.tf-btn-cancel {
+  padding: 10px 20px; border: 1.5px solid var(--border); border-radius: var(--r-md);
+  background: var(--surface-2); color: var(--text-2); font-family: var(--font-body);
+  font-size: 13.5px; font-weight: 600; cursor: pointer;
+}
+.tf-btn-save {
+  display: flex; align-items: center; gap: 8px; padding: 10px 22px;
+  background: var(--charcoal); color: white; border: none; border-radius: var(--r-md);
+  font-family: var(--font-body); font-size: 13.5px; font-weight: 700; cursor: pointer;
+}
+[data-theme="dark"] .tf-btn-save { background: var(--gold); }
+.confirm-box {
+  background: var(--surface); border-radius: var(--r-xl); border: 1px solid var(--border);
+  box-shadow: var(--shadow-xl); padding: 36px; text-align: center;
+  max-width: 360px; width: 100%; margin: 16px; animation: slideUp 0.25s var(--ease) both;
+}
+.confirm-box h3 { font-size: 18px; font-weight: 700; margin: 12px 0 8px; color: var(--text-1); }
+.confirm-box p  { font-size: 13.5px; color: var(--text-3); margin-bottom: 24px; }
+.confirm-actions { display: flex; gap: 12px; justify-content: center; }
+.tf-btn-danger {
+  display: flex; align-items: center; gap: 8px; padding: 10px 22px;
+  background: #EF4444; color: white; border: none; border-radius: var(--r-md);
+  font-family: var(--font-body); font-size: 13.5px; font-weight: 700; cursor: pointer;
+}
+.tf-btn-danger:hover { background: #DC2626; }
+
+
 .em-container {
   display: flex;
   flex-direction: column;

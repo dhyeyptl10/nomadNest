@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
+import { useAuth } from '../context/AuthContext'
+import { useStorage } from '../context/StorageContext'
 import {
   HERO_IMG, HERO_SMALL_A, HERO_SMALL_B,
   REC_IMGS, ADV_MOUNTAIN, ADV_NIGHT_SKY,
@@ -67,6 +69,14 @@ export default function Dashboard() {
   const [notif, setNotif] = useState(true)
   const [search, setSearch] = useState('')
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const { tripsStore } = useStorage()
+
+  const firstName = currentUser?.name?.split(' ')[0] || 'Explorer'
+  const allTrips  = tripsStore?.getAll() || []
+  const upcomingTrips = allTrips
+    .filter(t => t.status === 'Upcoming' || t.status === 'Ongoing')
+    .slice(0, 3)
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 40); return () => clearTimeout(t) }, [])
 
@@ -86,9 +96,9 @@ export default function Dashboard() {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
               {notif && <span className="bell-dot" />}
             </button>
-            <div className="user-chip">
-              <img src="https://picsum.photos/seed/portrait/80/80" className="u-avatar" alt="User" />
-              <div><p className="u-hi">Hi, Ananya</p><p className="u-role">Explorer <span>▾</span></p></div>
+            <div className="user-chip" onClick={() => navigate('/profile')} style={{ cursor:'pointer' }}>
+              <img src={currentUser?.avatar || 'https://picsum.photos/seed/portrait/80/80'} className="u-avatar" alt="User" />
+              <div><p className="u-hi">Hi, {firstName}</p><p className="u-role">Explorer <span>▾</span></p></div>
             </div>
           </div>
         </header>
@@ -224,42 +234,49 @@ export default function Dashboard() {
               <h2 className="sec-title">Your Upcoming Trips</h2>
               <button className="view-all" onClick={() => navigate('/trips')}>View All →</button>
             </div>
-            <div className="ut-layout">
-              {/* Featured large card */}
-              <div className="ut-main">
-                <div className="ut-img-wrap">
-                  <img src={UPCOMING_TRIPS[0].img} alt={UPCOMING_TRIPS[0].dest} className="ut-img" />
-                  <div className="ut-img-overlay" />
-                  <div className="ut-img-info">
-                    <p className="ut-dest">{UPCOMING_TRIPS[0].dest}</p>
-                    <p className="ut-dates">{UPCOMING_TRIPS[0].dates}</p>
-                    <div className="ut-meta">
-                      <span>📅 {UPCOMING_TRIPS[0].days} Days Trip</span>
-                      <span>👥 {UPCOMING_TRIPS[0].people} People</span>
-                    </div>
-                    <div className="ut-prog-wrap">
-                      <div className="ut-prog-bar">
-                        <div className="ut-prog-fill" style={{ width: `${UPCOMING_TRIPS[0].progress}%` }} />
+            {upcomingTrips.length === 0 ? (
+              <div style={{ textAlign:'center', padding:'40px 0', color:'var(--text-3)' }}>
+                <span style={{ fontSize:40 }}>🗺️</span>
+                <p style={{ marginTop:10, fontSize:14 }}>No upcoming trips yet — <button style={{ background:'none',border:'none',cursor:'pointer',color:'var(--gold)',fontWeight:600,fontSize:14 }} onClick={() => navigate('/trips')}>plan one!</button></p>
+              </div>
+            ) : (
+              <div className="ut-layout">
+                {/* Featured large card */}
+                <div className="ut-main">
+                  <div className="ut-img-wrap">
+                    <img src={upcomingTrips[0].img} alt={upcomingTrips[0].dest} className="ut-img" />
+                    <div className="ut-img-overlay" />
+                    <div className="ut-img-info">
+                      <p className="ut-dest">{upcomingTrips[0].dest}</p>
+                      <p className="ut-dates">{upcomingTrips[0].dates}</p>
+                      <div className="ut-meta">
+                        <span>📅 {upcomingTrips[0].days} Days Trip</span>
+                        <span>👥 {upcomingTrips[0].members || 2} People</span>
                       </div>
-                      <span className="ut-prog-pct">{UPCOMING_TRIPS[0].progress}% Completed</span>
+                      <div className="ut-prog-wrap">
+                        <div className="ut-prog-bar">
+                          <div className="ut-prog-fill" style={{ width: `${upcomingTrips[0].progress}%` }} />
+                        </div>
+                        <span className="ut-prog-pct">{upcomingTrips[0].progress}% Completed</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              {/* Side list */}
-              <div className="ut-side">
-                {UPCOMING_TRIPS.slice(1).map((trip, i) => (
-                  <div className="ut-row" key={i}>
-                    <img src={trip.img} alt={trip.dest} className="ut-row-img" />
-                    <div className="ut-row-info">
-                      <p className="ut-row-dest">{trip.dest}</p>
-                      <p className="ut-row-dates">{trip.dates}</p>
-                      <p className="ut-row-meta">📅 {trip.days} Days Trip &nbsp;·&nbsp; 👥 {trip.people} People</p>
+                {/* Side list */}
+                <div className="ut-side">
+                  {upcomingTrips.slice(1).map((trip, i) => (
+                    <div className="ut-row" key={i}>
+                      <img src={trip.img} alt={trip.dest} className="ut-row-img" />
+                      <div className="ut-row-info">
+                        <p className="ut-row-dest">{trip.dest}</p>
+                        <p className="ut-row-dates">{trip.dates}</p>
+                        <p className="ut-row-meta">📅 {trip.days} Days Trip &nbsp;·&nbsp; 👥 {trip.members || 2} People</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </section>
 
           {/* ── Travel Inspiration Blog ── */}

@@ -102,3 +102,79 @@
 .bk-ref-full { margin-left:auto; text-align:right; }
 .bk-ref-title { font-size:10px; color:var(--text-3); text-transform:uppercase; letter-spacing:1px; font-weight:700; }
 .bk-ref-code { font-size:15px; font-weight:700; color:var(--text-1); font-family:monospace; margin-top:4px; }
+
+/* No results */
+.no-results {
+  display:flex; flex-direction:column; align-items:center;
+  gap:16px; padding:80px 24px; color:var(--text-3); font-size:15px; text-align:center;
+}
+.no-results button {
+  padding:10px 24px; border-radius:var(--r-md); border:1.5px solid var(--border-2);
+  background:var(--surface); color:var(--text-1); font-family:var(--font-body);
+  font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s;
+}
+.no-results button:hover { border-color:var(--gold); color:var(--gold); }
+
+/* Modal shared */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center; z-index:1000;
+  animation:fadeIn 0.2s ease both;
+}
+.modal-box {
+  background:var(--surface); border-radius:var(--r-xl);
+  border:1px solid var(--border); box-shadow:var(--shadow-xl);
+  width:100%; max-width:600px; max-height:90vh; overflow-y:auto;
+  animation:slideUp 0.25s var(--ease) both; margin:16px;
+}
+.modal-hdr {
+  display:flex; align-items:center; justify-content:space-between; padding:20px 24px 0;
+}
+.modal-title { font-size:18px; font-weight:700; color:var(--text-1); }
+.modal-close {
+  width:32px; height:32px; border:none; background:var(--surface-2); border-radius:8px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  color:var(--text-3); transition:all 0.15s;
+}
+.modal-close:hover { background:var(--surface-3); color:var(--text-1); }
+.trip-form { padding:20px 24px 24px; }
+.tf-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
+.tf-full { grid-column:1 / -1; }
+.tf-field { display:flex; flex-direction:column; gap:6px; }
+.tf-field label { font-size:12.5px; font-weight:600; color:var(--text-2); }
+.tf-field input, .tf-field select, .tf-field textarea {
+  padding:10px 14px; border:1.5px solid var(--border); border-radius:var(--r-md);
+  font-size:13.5px; font-family:var(--font-body); color:var(--text-1);
+  background:var(--surface-2); outline:none; transition:border-color 0.2s, box-shadow 0.2s;
+}
+.tf-field input:focus, .tf-field select:focus, .tf-field textarea:focus {
+  border-color:var(--gold); box-shadow:0 0 0 3px rgba(212,168,67,0.12);
+}
+.tf-actions { display:flex; gap:12px; justify-content:flex-end; }
+.tf-btn-cancel {
+  padding:10px 20px; border:1.5px solid var(--border); border-radius:var(--r-md);
+  background:var(--surface-2); color:var(--text-2); font-family:var(--font-body);
+  font-size:13.5px; font-weight:600; cursor:pointer; transition:all 0.15s;
+}
+.tf-btn-cancel:hover { border-color:var(--text-2); color:var(--text-1); }
+.tf-btn-save {
+  display:flex; align-items:center; gap:8px; padding:10px 22px;
+  background:var(--charcoal); color:white; border:none; border-radius:var(--r-md);
+  font-family:var(--font-body); font-size:13.5px; font-weight:700; cursor:pointer; transition:all 0.15s;
+}
+.tf-btn-save:hover { background:var(--charcoal-2); transform:translateY(-1px); }
+[data-theme="dark"] .tf-btn-save { background:var(--gold); }
+.confirm-box {
+  background:var(--surface); border-radius:var(--r-xl); border:1px solid var(--border);
+  box-shadow:var(--shadow-xl); padding:36px; text-align:center;
+  max-width:360px; width:100%; margin:16px; animation:slideUp 0.25s var(--ease) both;
+}
+.confirm-box h3 { font-size:18px; font-weight:700; margin:12px 0 8px; color:var(--text-1); }
+.confirm-box p { font-size:13.5px; color:var(--text-3); margin-bottom:24px; }
+.confirm-actions { display:flex; gap:12px; justify-content:center; }
+.tf-btn-danger {
+  display:flex; align-items:center; gap:8px; padding:10px 22px;
+  background:#EF4444; color:white; border:none; border-radius:var(--r-md);
+  font-family:var(--font-body); font-size:13.5px; font-weight:700; cursor:pointer; transition:all 0.15s;
+}
+.tf-btn-danger:hover { background:#DC2626; }

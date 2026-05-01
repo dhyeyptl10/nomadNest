@@ -1,85 +1,136 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import L from 'leaflet'
-import { 
-  ShieldAlert, Phone, MessageSquare, Plus, Hospital, 
-  MapPin, User, ChevronRight, AlertTriangle 
+import {
+  ShieldAlert, Phone, MessageSquare, Plus, Hospital,
+  MapPin, User, AlertTriangle, Trash2, Edit2, Check, X
 } from 'lucide-react'
 import Sidebar from '../components/Sidebar'
+import { useStorage } from '../context/StorageContext'
 import './Emergency.css'
 
 const HOSPITALS = [
-  { id: 1, name: 'City Central Hospital', dist: '0.8 km', phone: '+91 80 1234 5678', pos: [12.9716, 77.5946] },
-  { id: 2, name: 'St. Mary’s Emergency', dist: '1.2 km', phone: '+91 80 8765 4321', pos: [12.9750, 77.6000] },
+  { id: 1, name: 'City Central Hospital',  dist: '0.8 km', phone: '+91 80 1234 5678', pos: [12.9716, 77.5946] },
+  { id: 2, name: "St. Mary's Emergency",   dist: '1.2 km', phone: '+91 80 8765 4321', pos: [12.9750, 77.6000] },
   { id: 3, name: 'Apollo Specialist Care', dist: '2.5 km', phone: '+91 80 1122 3344', pos: [12.9650, 77.5850] },
 ]
 
-const CONTACTS = [
-  { id: 1, name: 'Rajesh Sharma', rel: 'Father', phone: '+91 98765 43210', initial: 'R' },
-  { id: 2, name: 'Priya Patel', rel: 'Partner', phone: '+91 91234 56789', initial: 'P' },
-]
+function ContactModal({ initial, onSave, onClose }) {
+  const [form, setForm] = useState(initial || { name:'', rel:'', phone:'' })
+  const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    onSave({ ...form, initial: form.name.trim()[0]?.toUpperCase() || '?' })
+    onClose()
+  }
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-box" style={{ maxWidth:420 }} onClick={e => e.stopPropagation()}>
+        <div className="modal-hdr">
+          <h3 className="modal-title">{initial ? 'Edit Contact ✏️' : 'Add Emergency Contact 📞'}</h3>
+          <button className="modal-close" onClick={onClose}><X size={16} /></button>
+        </div>
+        <form className="trip-form" onSubmit={handleSubmit}>
+          <div className="tf-grid" style={{ gridTemplateColumns:'1fr' }}>
+            <div className="tf-field">
+              <label>Full Name *</label>
+              <input required placeholder="Rajesh Sharma" value={form.name} onChange={e => set('name', e.target.value)} />
+            </div>
+            <div className="tf-field">
+              <label>Relationship *</label>
+              <input required placeholder="Father, Partner, Friend..." value={form.rel} onChange={e => set('rel', e.target.value)} />
+            </div>
+            <div className="tf-field">
+              <label>Phone Number *</label>
+              <input required type="tel" placeholder="+91 98765 43210" value={form.phone} onChange={e => set('phone', e.target.value)} />
+            </div>
+          </div>
+          <div className="tf-actions">
+            <button type="button" className="tf-btn-cancel" onClick={onClose}>Cancel</button>
+            <button type="submit" className="tf-btn-save">
+              <Check size={14} /> {initial ? 'Save Changes' : 'Add Contact'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}
 
 export default function Emergency() {
-  const [mounted, setMounted] = useState(false)
-  const [userPos, setUserPos] = useState([12.9716, 77.5946]) // Default: Bangalore
+  const [mounted, setMounted]         = useState(false)
+  const [userPos, setUserPos]         = useState([12.9716, 77.5946])
   const [isSOSActive, setIsSOSActive] = useState(false)
-  const [alertMsg, setAlertMsg] = useState(null)
+  const [alertMsg, setAlertMsg]       = useState(null)
   const [holdProgress, setHoldProgress] = useState(0)
-  const [isHolding, setIsHolding] = useState(false)
-  
-  const mapRef = useRef(null)
+  const [isHolding, setIsHolding]     = useState(false)
+  const [contacts, setContacts]       = useState([])
+  const [showAdd, setShowAdd]         = useState(false)
+  const [editContact, setEditContact] = useState(null)
+  const [deleteId, setDeleteId]       = useState(null)
+  const [hospSearch, setHospSearch]   = useState('')
+
+  const mapRef      = useRef(null)
   const mapInstance = useRef(null)
+  const { emergencyStore } = useStorage()
+
+  /* Load contacts from storage */
+  useEffect(() => {
+    if (emergencyStore) setContacts(emergencyStore.getAll())
+  }, [emergencyStore])
 
   useEffect(() => {
     setMounted(true)
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        setUserPos([position.coords.latitude, position.coords.longitude])
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        setUserPos([pos.coords.latitude, pos.coords.longitude])
       })
     }
   }, [])
 
-  // Direct Leaflet Initialization
+  /* ── Leaflet map init — fixed double-init bug ── */
   useEffect(() => {
-    if (mounted && mapRef.current && !mapInstance.current) {
-      mapInstance.current = L.map(mapRef.current).setView(userPos, 15)
-      
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(mapInstance.current)
+    if (!mounted || !mapRef.current) return
 
-      // User Marker
-      const userIcon = L.divIcon({
-        className: 'custom-marker',
-        html: '<div class="marker-pulse"></div><div class="marker-dot"></div>',
-        iconSize: [30, 30],
-        iconAnchor: [15, 15]
-      })
-      L.marker(userPos, { icon: userIcon }).addTo(mapInstance.current).bindPopup('You are here')
-
-      // Hospital Markers
-      const hospitalIcon = L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/3063/3063176.png',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
-      })
-
-      HOSPITALS.forEach(h => {
-        L.marker(h.pos, { icon: hospitalIcon })
-          .addTo(mapInstance.current)
-          .bindPopup(`
-            <div class="popup-content">
-              <strong>${h.name}</strong><br/>
-              ${h.dist} away<br/>
-              <button class="popup-call-btn" onclick="window.location.href='tel:${h.phone}'">Call Now</button>
-            </div>
-          `)
-      })
-    }
-
+    // Destroy previous instance if exists
     if (mapInstance.current) {
-      mapInstance.current.setView(userPos, 15)
+      mapInstance.current.remove()
+      mapInstance.current = null
     }
+
+    const map = L.map(mapRef.current, { zoomControl: true }).setView(userPos, 15)
+    mapInstance.current = map
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map)
+
+    // User Marker
+    const userIcon = L.divIcon({
+      className: 'custom-marker',
+      html: '<div class="marker-pulse"></div><div class="marker-dot"></div>',
+      iconSize: [30, 30], iconAnchor: [15, 15]
+    })
+    L.marker(userPos, { icon: userIcon }).addTo(map).bindPopup('You are here')
+
+    // Hospital Markers
+    const hospitalIcon = L.icon({
+      iconUrl: 'https://cdn-icons-png.flaticon.com/512/3063/3063176.png',
+      iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -32]
+    })
+
+    HOSPITALS.forEach(h => {
+      L.marker(h.pos, { icon: hospitalIcon })
+        .addTo(map)
+        .bindPopup(`
+          <div class="popup-content">
+            <strong>${h.name}</strong><br/>
+            ${h.dist} away<br/>
+            <button class="popup-call-btn" onclick="window.location.href='tel:${h.phone}'">Call Now</button>
+          </div>
+        `)
+    })
 
     return () => {
       if (mapInstance.current) {
@@ -87,9 +138,10 @@ export default function Emergency() {
         mapInstance.current = null
       }
     }
-  }, [mounted, userPos])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mounted])
 
-  // SOS Hold Logic
+  /* SOS Hold Logic */
   useEffect(() => {
     let timer
     if (isHolding && !isSOSActive) {
@@ -112,21 +164,39 @@ export default function Emergency() {
   const triggerSOS = () => {
     setIsSOSActive(true)
     setIsHolding(false)
-    setAlertMsg("SOS Signal Sent! Local authorities and emergency contacts have been notified.")
-    setTimeout(() => {
-      setAlertMsg(null)
-      setIsSOSActive(false)
-    }, 5000)
+    const phones = contacts.map(c => c.phone).join(', ') || 'emergency contacts'
+    setAlertMsg(`🚨 SOS Signal Sent! Notified: ${phones}. Local authorities alerted.`)
+    setTimeout(() => { setAlertMsg(null); setIsSOSActive(false) }, 6000)
   }
 
-  const handleCall = (num) => {
-    window.location.href = `tel:${num}`
-  }
+  const handleCall = (num) => { window.location.href = `tel:${num}` }
 
   const handleMessage = (num) => {
-    const msg = `URGENT: I need help. My current location is: https://www.google.com/maps?q=${userPos[0]},${userPos[1]}`
+    const msg = `URGENT: I need help. My location: https://www.google.com/maps?q=${userPos[0]},${userPos[1]}`
     window.location.href = `sms:${num}?body=${encodeURIComponent(msg)}`
   }
+
+  /* Contact CRUD handlers */
+  const handleAddContact = (c) => {
+    emergencyStore.add(c)
+    setContacts(emergencyStore.getAll())
+  }
+
+  const handleEditContact = (c) => {
+    emergencyStore.update(c.id, c)
+    setContacts(emergencyStore.getAll())
+    setEditContact(null)
+  }
+
+  const handleDeleteContact = (id) => {
+    emergencyStore.remove(id)
+    setContacts(emergencyStore.getAll())
+    setDeleteId(null)
+  }
+
+  const filteredHospitals = HOSPITALS.filter(h =>
+    h.name.toLowerCase().includes(hospSearch.toLowerCase())
+  )
 
   return (
     <div className={`page-shell ${mounted ? 'mounted' : ''}`}>
@@ -147,40 +217,40 @@ export default function Emergency() {
 
         <div className="page-scroll">
           <div className="em-container">
-            
+
             {/* SOS HERO */}
             <section className="sos-hero">
               <div className="sos-hero-info">
                 <h2 className="sos-title">Emergency SOS</h2>
-                <p className="sos-subtitle">Press and hold the button for 3 seconds to trigger an emergency alert. This will notify your emergency contacts and local authorities.</p>
-                
+                <p className="sos-subtitle">Press and hold the button for 3 seconds to trigger an emergency alert. Your emergency contacts and local authorities will be notified with your live location.</p>
+
                 {alertMsg && (
-                  <div className="sos-alert-msg animate-fadeUp" style={{ marginTop: '24px' }}>
+                  <div className="sos-alert-msg animate-fadeUp" style={{ marginTop:'24px' }}>
                     <AlertTriangle size={20} />
                     <span>{alertMsg}</span>
                   </div>
                 )}
               </div>
-              
+
               <div className="sos-btn-wrap">
                 <svg className="sos-progress-svg" viewBox="0 0 100 100">
                   <circle className="sos-progress-bg" cx="50" cy="50" r="45" />
-                  <circle 
-                    className="sos-progress-fill" 
+                  <circle
+                    className="sos-progress-fill"
                     cx="50" cy="50" r="45"
                     style={{ strokeDasharray: 283, strokeDashoffset: 283 - (283 * holdProgress) / 100 }}
                   />
                 </svg>
 
-                <div className={`sos-pulse-ring ${isHolding ? 'sos-pulse--fast' : ''}`}></div>
-                <div className={`sos-pulse-ring sos-pulse-ring-2 ${isHolding ? 'sos-pulse--fast' : ''}`}></div>
-                
-                <button 
+                <div className={`sos-pulse-ring ${isHolding ? 'sos-pulse--fast' : ''}`} />
+                <div className={`sos-pulse-ring sos-pulse-ring-2 ${isHolding ? 'sos-pulse--fast' : ''}`} />
+
+                <button
                   className={`sos-btn ${isSOSActive ? 'sos-btn--active' : ''} ${isHolding ? 'sos-btn--holding' : ''}`}
                   onMouseDown={() => setIsHolding(true)}
                   onMouseUp={() => setIsHolding(false)}
                   onMouseLeave={() => setIsHolding(false)}
-                  onTouchStart={() => setIsHolding(true)}
+                  onTouchStart={(e) => { e.preventDefault(); setIsHolding(true) }}
                   onTouchEnd={() => setIsHolding(false)}
                 >
                   <ShieldAlert size={48} className="sos-btn-ico" />
@@ -190,7 +260,7 @@ export default function Emergency() {
             </section>
 
             <div className="em-grid">
-              
+
               {/* LIVE LOCATION MAP */}
               <div className="card map-card">
                 <div className="map-header">
@@ -205,21 +275,20 @@ export default function Emergency() {
                 </div>
               </div>
 
-
-              {/* SIDEBAR COL: HOSPITALS & CONTACTS */}
+              {/* SIDEBAR: HOSPITALS & CONTACTS */}
               <div className="flex-col gap-24">
-                
-                {/* EMERGENCY NUMBERS QUICK DIAL */}
+
+                {/* QUICK DIAL */}
                 <div className="card dial-card">
                   <div className="p-5 border-b border-border">
                     <span className="sec-title">Quick Dial Services</span>
                   </div>
                   <div className="dial-grid">
                     {[
-                      { lbl: 'Police', num: '100', ico: '👮', color: 'blue' },
-                      { lbl: 'Ambulance', num: '102', ico: '🚑', color: 'red' },
-                      { lbl: 'Fire', num: '101', ico: '🔥', color: 'amber' },
-                      { lbl: 'Women Help', num: '1091', ico: '🛡️', color: 'purple' },
+                      { lbl:'Police',     num:'100',  ico:'👮', color:'blue'   },
+                      { lbl:'Ambulance',  num:'102',  ico:'🚑', color:'red'    },
+                      { lbl:'Fire',       num:'101',  ico:'🔥', color:'amber'  },
+                      { lbl:'Women Help', num:'1091', ico:'🛡️', color:'purple' },
                     ].map(s => (
                       <button key={s.num} className={`dial-btn dial-btn--${s.color}`} onClick={() => handleCall(s.num)}>
                         <span className="dial-ico">{s.ico}</span>
@@ -231,6 +300,7 @@ export default function Emergency() {
                     ))}
                   </div>
                 </div>
+
                 {/* NEARBY HOSPITALS */}
                 <div className="card">
                   <div className="p-5 border-b border-border flex items-center justify-between">
@@ -240,10 +310,15 @@ export default function Emergency() {
                     </div>
                   </div>
                   <div className="hosp-search-wrap">
-                    <input className="hosp-search-inp" placeholder="Search facilities..." />
+                    <input
+                      className="hosp-search-inp"
+                      placeholder="Search facilities..."
+                      value={hospSearch}
+                      onChange={e => setHospSearch(e.target.value)}
+                    />
                   </div>
                   <div className="hosp-list">
-                    {HOSPITALS.map(h => (
+                    {filteredHospitals.map(h => (
                       <div className="hosp-item" key={h.id}>
                         <div className="hosp-info">
                           <div className="hosp-ico"><Hospital size={18} /></div>
@@ -257,46 +332,68 @@ export default function Emergency() {
                         </button>
                       </div>
                     ))}
+                    {filteredHospitals.length === 0 && (
+                      <p style={{ textAlign:'center', padding:'16px', color:'var(--text-3)', fontSize:13 }}>No hospitals found</p>
+                    )}
                   </div>
                 </div>
 
-                {/* EMERGENCY CONTACTS */}
+                {/* EMERGENCY CONTACTS — Full CRUD */}
                 <div className="card contacts-card">
                   <div className="contacts-header">
                     <div className="flex items-center gap-3">
                       <User className="text-gold" size={20} />
-                      <span className="sec-title">Emergency Contacts</span>
+                      <span className="sec-title">Emergency Contacts ({contacts.length})</span>
                     </div>
-                    <button className="btn btn-ghost p-1"><Plus size={18} /></button>
+                    <button className="btn btn-ghost p-1" onClick={() => setShowAdd(true)} title="Add contact">
+                      <Plus size={18} />
+                    </button>
                   </div>
+
                   <div className="contacts-list">
-                    {CONTACTS.map(c => (
+                    {contacts.length === 0 && (
+                      <div style={{ textAlign:'center', padding:'20px 16px', color:'var(--text-3)', fontSize:13 }}>
+                        <p>No contacts yet.</p>
+                        <button onClick={() => setShowAdd(true)} style={{ marginTop:8, color:'var(--gold)', background:'none', border:'none', cursor:'pointer', fontWeight:600, fontSize:13 }}>
+                          + Add your first contact
+                        </button>
+                      </div>
+                    )}
+                    {contacts.map(c => (
                       <div className="contact-item" key={c.id}>
-                        <div className="contact-avatar">{c.initial}</div>
+                        <div className="contact-avatar">{c.initial || c.name?.[0]?.toUpperCase() || '?'}</div>
                         <div className="contact-details">
                           <p className="contact-name">{c.name}</p>
                           <p className="contact-rel">{c.rel} · {c.phone}</p>
                         </div>
                         <div className="flex gap-2">
-                          <button className="btn btn-ghost p-2 text-blue" onClick={() => handleMessage(c.phone)}>
+                          <button className="btn btn-ghost p-2 text-blue" onClick={() => handleMessage(c.phone)} title="Send location">
                             <MessageSquare size={16} />
                           </button>
-                          <button className="btn btn-ghost p-2 text-green" onClick={() => handleCall(c.phone)}>
+                          <button className="btn btn-ghost p-2 text-green" onClick={() => handleCall(c.phone)} title="Call">
                             <Phone size={16} />
+                          </button>
+                          <button className="btn btn-ghost p-2" onClick={() => setEditContact(c)} title="Edit">
+                            <Edit2 size={14} />
+                          </button>
+                          <button className="btn btn-ghost p-2 text-red" onClick={() => setDeleteId(c.id)} title="Delete">
+                            <Trash2 size={14} />
                           </button>
                         </div>
                       </div>
                     ))}
                   </div>
-                  
-                  <div className="em-actions">
-                    <button className="action-btn action-btn-msg" onClick={() => handleMessage(CONTACTS[0].phone)}>
-                      <MessageSquare size={16} /> Urgent Req via Msg
-                    </button>
-                    <button className="action-btn action-btn-call" onClick={() => handleCall('112')}>
-                      <ShieldAlert size={16} /> Quick SOS Call
-                    </button>
-                  </div>
+
+                  {contacts.length > 0 && (
+                    <div className="em-actions">
+                      <button className="action-btn action-btn-msg" onClick={() => contacts.forEach(c => handleMessage(c.phone))}>
+                        <MessageSquare size={16} /> Msg All Contacts
+                      </button>
+                      <button className="action-btn action-btn-call" onClick={() => handleCall('112')}>
+                        <ShieldAlert size={16} /> Quick SOS Call
+                      </button>
+                    </div>
+                  )}
                 </div>
 
               </div>
@@ -305,6 +402,31 @@ export default function Emergency() {
           </div>
         </div>
       </main>
+
+      {/* Add Contact Modal */}
+      {showAdd && (
+        <ContactModal onSave={handleAddContact} onClose={() => setShowAdd(false)} />
+      )}
+
+      {/* Edit Contact Modal */}
+      {editContact && (
+        <ContactModal initial={editContact} onSave={handleEditContact} onClose={() => setEditContact(null)} />
+      )}
+
+      {/* Delete Confirm */}
+      {deleteId && (
+        <div className="modal-overlay" onClick={() => setDeleteId(null)}>
+          <div className="confirm-box" onClick={e => e.stopPropagation()}>
+            <span style={{ fontSize:36 }}>🗑️</span>
+            <h3>Remove this contact?</h3>
+            <p>They won't receive SOS alerts anymore.</p>
+            <div className="confirm-actions">
+              <button className="tf-btn-cancel" onClick={() => setDeleteId(null)}>Keep</button>
+              <button className="tf-btn-danger" onClick={() => handleDeleteContact(deleteId)}>Remove</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import './LoginPage.css'
 
 const MOUNTAIN_BG = 'https://picsum.photos/seed/mountain/1200/800'
-const BALI_THUMB = 'https://picsum.photos/seed/bali/300/300'
+const BALI_THUMB  = 'https://picsum.photos/seed/bali/300/300'
 
 function GoogleIcon() {
   return (
@@ -27,8 +28,7 @@ function AppleIcon() {
 function EyeIcon({ open }) {
   return open ? (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-      <circle cx="12" cy="12" r="3"/>
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
     </svg>
   ) : (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -67,36 +67,69 @@ function UserIcon() {
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const [tab, setTab] = useState('signin')
-  const [showPass, setShowPass] = useState(false)
-  const [showConfirmPass, setShowConfirmPass] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [imgLoaded, setImgLoaded] = useState(false)
+  const { login, register, currentUser } = useAuth()
 
-  const [form, setForm] = useState({
-    email: '',
-    password: '',
-    name: '',
-    confirmPassword: ''
-  })
+  const [tab,             setTab]             = useState('signin')
+  const [showPass,        setShowPass]        = useState(false)
+  const [showConfirmPass, setShowConfirmPass] = useState(false)
+  const [mounted,         setMounted]         = useState(false)
+  const [loading,         setLoading]         = useState(false)
+  const [imgLoaded,       setImgLoaded]       = useState(false)
+  const [error,           setError]           = useState('')
+
+  const [form, setForm] = useState({ email: '', password: '', name: '', confirmPassword: '' })
+
+  /* Redirect if already logged in */
+  useEffect(() => {
+    if (currentUser) navigate('/dashboard', { replace: true })
+  }, [currentUser, navigate])
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 50)
     return () => clearTimeout(timer)
   }, [])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      navigate('/dashboard')
-    }, 1500)
+
+    // Artificial small delay for UX
+    await new Promise(r => setTimeout(r, 600))
+
+    if (tab === 'signin') {
+      const result = login(form.email, form.password)
+      if (!result.success) {
+        setError(result.error)
+        setLoading(false)
+        return
+      }
+    } else {
+      if (form.password !== form.confirmPassword) {
+        setError('Passwords do not match.')
+        setLoading(false)
+        return
+      }
+      if (!form.name.trim()) {
+        setError('Please enter your full name.')
+        setLoading(false)
+        return
+      }
+      const result = register(form.name, form.email, form.password)
+      if (!result.success) {
+        setError(result.error)
+        setLoading(false)
+        return
+      }
+    }
+
+    setLoading(false)
+    navigate('/dashboard')
   }
 
   const handleTabChange = (newTab) => {
     setTab(newTab)
+    setError('')
     setForm({ email: '', password: '', name: '', confirmPassword: '' })
     setShowPass(false)
     setShowConfirmPass(false)
@@ -119,8 +152,7 @@ export default function LoginPage() {
         <div className="logo" style={{ animationDelay: '0.1s' }}>
           <div className="logo-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="3 18 12 2 21 18"/>
-              <path d="M9 18 12 12 15 18"/>
+              <polygon points="3 18 12 2 21 18"/><path d="M9 18 12 12 15 18"/>
             </svg>
           </div>
           <div className="logo-text">
@@ -132,8 +164,7 @@ export default function LoginPage() {
         {/* Hero copy */}
         <div className="hero-content">
           <h1 className="hero-title" style={{ animationDelay: '0.2s' }}>
-            Explore More
-            <br />
+            Explore More<br />
             <span className="hero-title-gold">Live More</span>
           </h1>
           <p className="hero-desc" style={{ animationDelay: '0.35s' }}>
@@ -194,6 +225,26 @@ export default function LoginPage() {
             </p>
           </div>
 
+          {/* Demo hint for sign-in */}
+          {tab === 'signin' && (
+            <div className="demo-hint">
+              <span>🎯 Demo: </span>
+              <button type="button" onClick={() => setForm({ ...form, email:'ananya@example.com', password:'password123' })}>
+                Use demo account
+              </button>
+            </div>
+          )}
+
+          {/* Error */}
+          {error && (
+            <div className="auth-error">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              {error}
+            </div>
+          )}
+
           {/* Form */}
           <form className="auth-form" onSubmit={handleSubmit}>
             {tab === 'signup' && (
@@ -240,12 +291,7 @@ export default function LoginPage() {
                   onChange={e => setForm({ ...form, password: e.target.value })}
                   required
                 />
-                <button
-                  type="button"
-                  className="eye-btn"
-                  onClick={() => setShowPass(v => !v)}
-                  tabIndex={-1}
-                >
+                <button type="button" className="eye-btn" onClick={() => setShowPass(v => !v)} tabIndex={-1}>
                   <EyeIcon open={showPass} />
                 </button>
               </div>
@@ -264,12 +310,7 @@ export default function LoginPage() {
                     onChange={e => setForm({ ...form, confirmPassword: e.target.value })}
                     required
                   />
-                  <button
-                    type="button"
-                    className="eye-btn"
-                    onClick={() => setShowConfirmPass(v => !v)}
-                    tabIndex={-1}
-                  >
+                  <button type="button" className="eye-btn" onClick={() => setShowConfirmPass(v => !v)} tabIndex={-1}>
                     <EyeIcon open={showConfirmPass} />
                   </button>
                 </div>
@@ -289,28 +330,19 @@ export default function LoginPage() {
                 <>
                   {tab === 'signin' ? 'Sign In' : 'Create Account'}
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"/>
-                    <polyline points="12 5 19 12 12 19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                   </svg>
                 </>
               )}
             </button>
 
             {/* Divider */}
-            <div className="or-divider">
-              <span>or continue with</span>
-            </div>
+            <div className="or-divider"><span>or continue with</span></div>
 
             {/* Social */}
             <div className="social-row">
-              <button type="button" className="social-btn">
-                <GoogleIcon />
-                <span>Google</span>
-              </button>
-              <button type="button" className="social-btn">
-                <AppleIcon />
-                <span>Apple</span>
-              </button>
+              <button type="button" className="social-btn"><GoogleIcon /><span>Google</span></button>
+              <button type="button" className="social-btn"><AppleIcon /><span>Apple</span></button>
             </div>
           </form>
 
