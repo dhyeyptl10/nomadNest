@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import Sidebar from '../components/Sidebar'
 import Topbar from '../components/Topbar'
@@ -50,6 +51,7 @@ const SAVED_DESTINATIONS = [
 ]
 
 export default function TravelStyle() {
+  const navigate = useNavigate()
   const [mounted, setMounted] = useState(false)
   const [step, setStep] = useState(0) // 0=intro, 1-5=questions, 6=result
   const [answers, setAnswers] = useState({})
@@ -65,6 +67,10 @@ export default function TravelStyle() {
       setStep(s => s + 1)
       setAnimating(false)
     }, 300)
+  }
+
+  const handleExplore = (d) => {
+    navigate('/trips', { state: { initialDest: d.name, initialImg: d.img } })
   }
 
   const progress = step === 0 ? 0 : step > 5 ? 100 : (step / 5) * 100
@@ -92,7 +98,7 @@ export default function TravelStyle() {
                 <h2 className="sec-title" style={{ marginBottom:14 }}>Your Current Style: 🏖️ Beach Wanderer</h2>
                 <div className="ts-match-grid">
                   {SAVED_DESTINATIONS.map(d => (
-                    <div key={d.id} className="ts-match-card"><img src={d.img} alt={d.name} className="ts-match-img" /><div className="ts-match-info"><p className="ts-match-name">{d.name}</p><div className="ts-match-bar-wrap"><div className="ts-match-bar"><div className="ts-match-fill" style={{ width:`${d.match}%` }} /></div><span className="ts-match-pct">{d.match}% match</span></div></div></div>
+                    <div key={d.id} className="ts-match-card" onClick={() => handleExplore(d)} style={{ cursor:'pointer' }}><img src={d.img} alt={d.name} className="ts-match-img" /><div className="ts-match-info"><p className="ts-match-name">{d.name}</p><div className="ts-match-bar-wrap"><div className="ts-match-bar"><div className="ts-match-fill" style={{ width:`${d.match}%` }} /></div><span className="ts-match-pct">{d.match}% match</span></div></div></div>
                   ))}
                 </div>
               </div>
@@ -110,8 +116,8 @@ export default function TravelStyle() {
           )}
           {step === 6 && (
             <div className="ts-result">
-              <div className="ts-result-card"><div className="ts-result-confetti">🎉</div><h1 className="ts-result-title">{getStyle().title}</h1><p className="ts-result-desc">{getStyle().desc}</p><div className="ts-result-actions"><button className="btn btn-primary" onClick={() => { setStep(0); setAnswers({}) }}>Retake Quiz</button><button className="btn btn-gold">Explore Matches →</button></div></div>
-              <div className="ts-match-grid" style={{ maxWidth:600 }}>{SAVED_DESTINATIONS.map(d => (<div key={d.id} className="ts-match-card"><img src={d.img} alt={d.name} className="ts-match-img" /><div className="ts-match-info"><p className="ts-match-name">{d.name}</p><div className="ts-match-bar-wrap"><div className="ts-match-bar"><div className="ts-match-fill" style={{ width:`${d.match}%` }} /></div><span className="ts-match-pct">{d.match}% match</span></div></div></div>))}</div>
+              <div className="ts-result-card"><div className="ts-result-confetti">🎉</div><h1 className="ts-result-title">{getStyle().title}</h1><p className="ts-result-desc">{getStyle().desc}</p><div className="ts-result-actions"><button className="btn btn-primary" onClick={() => { setStep(0); setAnswers({}) }}>Retake Quiz</button><button className="btn btn-gold" onClick={() => navigate('/destinations')}>Explore Matches →</button></div></div>
+              <div className="ts-match-grid" style={{ maxWidth:600 }}>{SAVED_DESTINATIONS.map(d => (<div key={d.id} className="ts-match-card" onClick={() => handleExplore(d)} style={{ cursor:'pointer' }}><img src={d.img} alt={d.name} className="ts-match-img" /><div className="ts-match-info"><p className="ts-match-name">{d.name}</p><div className="ts-match-bar-wrap"><div className="ts-match-bar"><div className="ts-match-fill" style={{ width:`${d.match}%` }} /></div><span className="ts-match-pct">{d.match}% match</span></div></div></div>))}</div>
             </div>
           )}
         </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useLocation } from 'react-router-dom'
 import Sidebar from '../components/Sidebar'
 import { fetchTrips, createTrip, updateTrip, deleteTrip } from '../store/slices/tripSlice'
 import { useToast } from '../context/ToastContext'
@@ -38,8 +39,8 @@ function Modal({ title, onClose, children }) {
   )
 }
 
-function TripForm({ initial, onSave, onClose }) {
-  const [form, setForm] = useState(initial || BLANK_FORM)
+function TripForm({ initial, onSave, onClose, initialData }) {
+  const [form, setForm] = useState(initial || { ...BLANK_FORM, ...initialData })
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
 
   const handleSubmit = (e) => {
@@ -118,12 +119,14 @@ function TripForm({ initial, onSave, onClose }) {
 }
 
 export default function Trips() {
+  const location = useLocation()
   const [mounted, setMounted] = useState(false)
   const [tab, setTab] = useState('All')
   const [view, setView] = useState('grid')
   const [showAdd, setShowAdd] = useState(false)
   const [editTrip, setEditTrip] = useState(null)
   const [deleteId, setDeleteId] = useState(null)
+  const [initialTripData, setInitialTripData] = useState(null)
   
   const dispatch = useDispatch()
   const { trips, loading } = useSelector((state) => state.trips)
@@ -133,8 +136,19 @@ export default function Trips() {
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 40)
     dispatch(fetchTrips())
+
+    if (location.state?.initialDest) {
+      setInitialTripData({
+        dest: location.state.initialDest,
+        img: location.state.initialImg,
+      })
+      setShowAdd(true)
+      // Clear state after reading to prevent re-opening on refresh
+      window.history.replaceState({}, document.title)
+    }
+
     return () => clearTimeout(t)
-  }, [dispatch])
+  }, [dispatch, location.state])
 
   const handleAdd = async (trip) => {
     const result = await dispatch(createTrip(trip))
@@ -254,7 +268,7 @@ export default function Trips() {
         </div>
       </div>
 
-      {showAdd && <Modal title="Plan a New Trip ✈️" onClose={() => setShowAdd(false)}><TripForm onSave={handleAdd} onClose={() => setShowAdd(false)} /></Modal>}
+      {showAdd && <Modal title="Plan a New Trip ✈️" onClose={() => setShowAdd(false)}><TripForm onSave={handleAdd} onClose={() => setShowAdd(false)} initialData={initialTripData} /></Modal>}
       {editTrip && <Modal title="Edit Trip ✏️" onClose={() => setEditTrip(null)}><TripForm initial={{ ...editTrip, activities: editTrip.activities.join(', ') }} onSave={handleEdit} onClose={() => setEditTrip(null)} /></Modal>}
       {deleteId && (
         <div className="modal-overlay" onClick={() => setDeleteId(null)}><div className="confirm-box" onClick={e => e.stopPropagation()}><span style={{ fontSize:36 }}>🗑️</span><h3>Delete this trip?</h3><p>This action cannot be undone.</p><div className="confirm-actions"><button className="tf-btn-cancel" onClick={() => setDeleteId(null)}>Keep It</button><button className="tf-btn-danger" onClick={() => handleDeleteConfirmed(deleteId)}>Delete</button></div></div></div>

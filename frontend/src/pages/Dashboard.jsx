@@ -70,6 +70,10 @@ export default function Dashboard() {
     return () => clearTimeout(t)
   }, [dispatch])
 
+  const handleExplore = (r) => {
+    navigate('/trips', { state: { initialDest: r.name, initialImg: r.img } })
+  }
+
   return (
     <div className={`db ${mounted ? 'db--on' : ''}`}>
       <Sidebar />
@@ -147,10 +151,10 @@ export default function Dashboard() {
             <div className="sec-hd"><h2 className="sec-title">Recommended For You</h2><button className="view-all" onClick={() => navigate('/destinations')}>View All →</button></div>
             <div className="rec-grid">
               {RECS.map((r, i) => (
-                <div className="rec-card" key={r.name} style={{ animationDelay: `${i * 0.07}s` }}>
+                <div className="rec-card" key={r.name} style={{ animationDelay: `${i * 0.07}s`, cursor: 'pointer' }} onClick={() => handleExplore(r)}>
                   <div className="rec-img-wrap">
                     <img src={r.img} alt={r.name} className="rec-img" />
-                    <button className={`rec-heart ${liked[i] ? 'rec-heart--on' : ''}`} onClick={() => setLiked(p => ({ ...p, [i]: !p[i] }))}><HeartFilled on={liked[i]} /></button>
+                    <button className={`rec-heart ${liked[i] ? 'rec-heart--on' : ''}`} onClick={(e) => { e.stopPropagation(); setLiked(p => ({ ...p, [i]: !p[i] })) }}><HeartFilled on={liked[i]} /></button>
                   </div>
                   <div className="rec-info"><p className="rec-name">{r.name}</p><p className="rec-tag">{r.tag}</p><div className="rec-rating"><StarFill /><span className="rec-score">{r.rating}</span><span className="rec-rev">({r.reviews} reviews)</span></div></div>
                 </div>

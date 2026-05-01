@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import Sidebar from '../components/Sidebar'
 import './Destinations.css'
@@ -36,6 +37,7 @@ const TAG_COLORS = {
 }
 
 export default function Destinations() {
+  const navigate = useNavigate()
   const [mounted, setMounted] = useState(false)
   const [activecat, setActivecat] = useState('All')
   const [liked, setLiked] = useState({})
@@ -43,6 +45,10 @@ export default function Destinations() {
   const [sort, setSort] = useState('rating')
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 40); return () => clearTimeout(t) }, [])
+
+  const handleExplore = (dest) => {
+    navigate('/trips', { state: { initialDest: `${dest.name}, ${dest.country}`, initialImg: dest.img } })
+  }
 
   const filtered = DESTINATIONS
     .filter(d => activecat === 'All' || d.cat === activecat)
@@ -65,7 +71,7 @@ export default function Destinations() {
           <div className="dest-hero"><img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1400&h=500&q=80&auto=format&fit=crop" alt="Destinations" className="dest-hero-img" /><div className="dest-hero-overlay"><h2 className="dest-hero-h">Where do you want to go next?</h2><p className="dest-hero-p">From tropical beaches to alpine peaks — every dream destination awaits</p><div className="dest-hero-stats"><div className="dest-stat"><span className="dest-stat-num">50+</span><span className="dest-stat-lbl">Countries</span></div><div className="dest-stat-div"/><div className="dest-stat"><span className="dest-stat-num">200+</span><span className="dest-stat-lbl">Destinations</span></div><div className="dest-stat-div"/><div className="dest-stat"><span className="dest-stat-num">10k+</span><span className="dest-stat-lbl">Happy Travelers</span></div></div></div></div>
           <div className="cat-row">{CATEGORIES.map(c => (<button key={c} className={`cat-pill ${activecat === c ? 'cat-pill--on' : ''}`} onClick={() => setActivecat(c)}>{c}</button>))}</div>
           <div className="results-bar"><p className="results-count">{filtered.length} destinations found</p></div>
-          <div className="dest-grid">{filtered.map((dest, i) => { const tagStyle = TAG_COLORS[dest.tag] || {}; return (<div className="dest-card" key={dest.name} style={{ animationDelay: `${i * 0.05}s` }}><div className="dest-img-wrap"><img src={dest.img} alt={dest.name} className="dest-img" /><div className="dest-tag-wrap"><span className="dest-tag" style={{ background: tagStyle.bg, color: tagStyle.color }}>{dest.tag}</span></div><button className={`dest-heart ${liked[dest.name] ? 'dest-heart--on' : ''}`} onClick={() => setLiked(p => ({ ...p, [dest.name]: !p[dest.name] }))}><HeartFilled on={liked[dest.name]} /></button></div><div className="dest-info"><div className="dest-name-row"><div><p className="dest-name">{dest.name}</p><p className="dest-country"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>{dest.country}</p></div><p className="dest-price">{dest.price}</p></div><div className="dest-bottom"><div className="dest-rating"><StarFill /><span className="dest-score">{dest.rating}</span><span className="dest-rev">({dest.reviews})</span></div><button className="dest-btn">Explore →</button></div></div></div>) })}</div>
+          <div className="dest-grid">{filtered.map((dest, i) => { const tagStyle = TAG_COLORS[dest.tag] || {}; return (<div className="dest-card" key={dest.name} style={{ animationDelay: `${i * 0.05}s`, cursor: 'pointer' }} onClick={() => handleExplore(dest)}><div className="dest-img-wrap"><img src={dest.img} alt={dest.name} className="dest-img" /><div className="dest-tag-wrap"><span className="dest-tag" style={{ background: tagStyle.bg, color: tagStyle.color }}>{dest.tag}</span></div><button className={`dest-heart ${liked[dest.name] ? 'dest-heart--on' : ''}`} onClick={(e) => { e.stopPropagation(); setLiked(p => ({ ...p, [dest.name]: !p[dest.name] })) }}><HeartFilled on={liked[dest.name]} /></button></div><div className="dest-info"><div className="dest-name-row"><div><p className="dest-name">{dest.name}</p><p className="dest-country"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>{dest.country}</p></div><p className="dest-price">{dest.price}</p></div><div className="dest-bottom"><div className="dest-rating"><StarFill /><span className="dest-score">{dest.rating}</span><span className="dest-rev">({dest.reviews})</span></div><button className="dest-btn">Explore →</button></div></div></div>) })}</div>
           {filtered.length === 0 && (<div className="no-results"><span style={{ fontSize: 48 }}>🔍</span><p>No destinations found for "{search}"</p><button onClick={() => { setSearch(''); setActivecat('All') }}>Clear filters</button></div>)}
         </div>
       </div>
