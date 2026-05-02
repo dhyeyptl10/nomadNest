@@ -58,8 +58,6 @@ router.post('/', protect, upload.single('image'), async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
     if (user) {
-      const filePath = `/${req.file.path.replace(/\\/g, '/')}`;
-      user.avatar = `http://localhost:5000${filePath}`;
       await user.save();
       res.send({
         message: 'Image uploaded',

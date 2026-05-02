@@ -20,11 +20,6 @@ const swaggerOptions = {
       version: '1.0.0',
       description: 'API Documentation for WanderLust Travel Planner',
     },
-    servers: [
-      {
-        url: `http://localhost:${process.env.PORT || 5000}`,
-      },
-    ],
     components: {
       securitySchemes: {
         bearerAuth: {
