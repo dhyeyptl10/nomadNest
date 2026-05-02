@@ -33,6 +33,27 @@ const upload = multer({
   },
 });
 
+/**
+ * @swagger
+ * /api/upload:
+ *   post:
+ *     summary: Upload an image
+ *     tags: [Upload]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Image uploaded
+ */
 router.post('/', protect, upload.single('image'), async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
