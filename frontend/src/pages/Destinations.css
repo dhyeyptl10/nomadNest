@@ -158,3 +158,29 @@
   font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;
 }
 .no-results button:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── Mobile Responsiveness ── */
+
+@media (max-width: 768px) {
+  .pg-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .pg-search {
+    width: 100%;
+  }
+  .dest-hero {
+    height: 180px;
+    margin: 16px 18px 0;
+  }
+  .dest-hero-overlay {
+    padding: 0 20px;
+  }
+  .dest-hero-h {
+    font-size: 24px;
+  }
+  .dest-hero-p, .dest-hero-stats {
+    display: none;
+  }
+}

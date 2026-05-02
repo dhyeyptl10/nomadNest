@@ -292,3 +292,66 @@
 .sb-icon-btn--active { color: var(--gold); }
 .sb-icon-btn--danger { color: var(--red); }
 .sb-icon-btn--danger:hover { background: var(--red-bg); }
+
+/* ── Mobile Bottom Navigation ── */
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 100vw;
+    height: 64px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    flex-direction: row;
+    border-right: none;
+    border-top: 1px solid var(--border);
+    padding: 0 10px;
+    background: var(--surface);
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+  }
+
+  .sb-logo, 
+  .sb-collapse-btn, 
+  .sb-bottom, 
+  .sb-collapsed-bottom,
+  .sb-item-label,
+  .sb-badge:not(.sb-badge--dot) {
+    display: none !important;
+  }
+
+  .sb-nav {
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0;
+    width: 100%;
+    overflow: visible;
+  }
+
+  .sb-item {
+    width: auto;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 12px;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  /* Only show core nav items on mobile */
+  .sb-item:nth-child(n+7) {
+    display: none;
+  }
+
+  .sb-item-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .sb-item--active {
+    background: transparent;
+    color: var(--gold);
+    border-top: 3px solid var(--gold);
+  }
+}
