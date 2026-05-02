@@ -11,6 +11,12 @@ import {
 } from '../data/images'
 import './Dashboard.css'
 
+// ── MUI Imports ──
+import { Tooltip, CircularProgress, IconButton, Badge } from '@mui/material'
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
+import SearchIcon from '@mui/icons-material/Search'
+import { trackEvent } from '../services/analytics'
+
 const RECS = [
   { name: 'Maldives',    tag: 'Paradise on Earth', rating: 4.8, reviews: 320, img: REC_IMGS.maldives },
   { name: 'Switzerland', tag: 'Alpine Wonderland',  rating: 4.9, reviews: 280, img: REC_IMGS.switzerland },
@@ -71,6 +77,7 @@ export default function Dashboard() {
   }, [dispatch])
 
   const handleExplore = (r) => {
+    trackEvent('Dashboard', 'Explore Recommendation', r.name)
     navigate('/trips', { state: { initialDest: r.name, initialImg: r.img } })
   }
 
@@ -82,18 +89,24 @@ export default function Dashboard() {
         {/* ── Top bar ── */}
         <header className="topbar">
           <div className="search-wrap">
-            <svg className="search-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <SearchIcon sx={{ fontSize: 20, color: '#9CA3AF', mr: 1 }} />
             <input className="search-inp" placeholder="Search destinations, experiences..." value={search} onChange={e => setSearch(e.target.value)} />
           </div>
           <div className="topbar-r">
-            <button className="bell-btn" onClick={() => setNotif(false)}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-              {notif && <span className="bell-dot" />}
-            </button>
-            <div className="user-chip" onClick={() => navigate('/profile')} style={{ cursor:'pointer' }}>
-              <img src={userInfo?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&q=80&auto=format&fit=crop'} className="u-avatar" alt="User" />
-              <div><p className="u-hi">Hi, {firstName}</p><p className="u-role">Explorer <span>▾</span></p></div>
-            </div>
+            <Tooltip title="Notifications">
+              <IconButton className="bell-btn" onClick={() => setNotif(false)} sx={{ color: 'inherit' }}>
+                <Badge variant="dot" color="error" invisible={!notif}>
+                  <NotificationsNoneIcon />
+                </Badge>
+              </IconButton>
+            </Tooltip>
+            
+            <Tooltip title="View Profile">
+              <div className="user-chip" onClick={() => navigate('/profile')} style={{ cursor:'pointer' }}>
+                <img src={userInfo?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&q=80&auto=format&fit=crop'} className="u-avatar" alt="User" />
+                <div><p className="u-hi">Hi, {firstName}</p><p className="u-role">Explorer <span>▾</span></p></div>
+              </div>
+            </Tooltip>
           </div>
         </header>
 
@@ -178,7 +191,7 @@ export default function Dashboard() {
           <section className="sec">
             <div className="sec-hd"><h2 className="sec-title">Your Upcoming Trips</h2><button className="view-all" onClick={() => navigate('/trips')}>View All →</button></div>
             {tripsLoading ? (
-              <div style={{ textAlign:'center', padding:'40px 0' }}><span className="spinner" /></div>
+              <div style={{ textAlign:'center', padding:'40px 0' }}><CircularProgress size={32} sx={{ color: 'var(--gold)' }} /></div>
             ) : upcomingTrips.length === 0 ? (
               <div style={{ textAlign:'center', padding:'40px 0', color:'var(--text-3)' }}><span style={{ fontSize:40 }}>🗺️</span><p style={{ marginTop:10, fontSize:14 }}>No upcoming trips yet — <button style={{ background:'none',border:'none',cursor:'pointer',color:'var(--gold)',fontWeight:600,fontSize:14 }} onClick={() => navigate('/trips')}>plan one!</button></p></div>
             ) : (
