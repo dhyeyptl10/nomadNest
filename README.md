@@ -1,91 +1,56 @@
 # 🌍 NomadNest — Premium Travel Planning Platform
 
-> A full-featured, industry-ready travel planning web application built with React + Vite, featuring authentication, CRUD operations, and a polished premium UI.
+> A full-featured, industry-ready travel planning web application built with the MERN stack (MongoDB, Express, React, Node.js), featuring authentication, CRUD operations, and a polished premium UI.
 
 ---
 
 ## 🚀 Live Preview
 
-Run locally → `http://localhost:5174`
-
-Demo credentials:
-- **Email:** `ananya@example.com`
-- **Password:** `password123`
+- **🌐 Live Demo (Netlify):** [https://nomadnesttt.netlify.app/](https://nomadnesttt.netlify.app/)
+- **🛠️ Backend API (Render):** [https://nomadnest-x4an.onrender.com/](https://nomadnest-x4an.onrender.com/)
+- **📖 API Documentation:** [https://nomadnest-x4an.onrender.com/api-docs/](https://nomadnest-x4an.onrender.com/api-docs/)
+- **🎨 Figma Design:** [https://ream-plow-46277508.figma.site/](https://ream-plow-46277508.figma.site/)
 
 ---
 
 ## ✨ Features
 
 ### Core
-- 🔐 **Authentication** — Register, sign in, persistent login via localStorage
-- 🗺️ **Trip Management** — Full CRUD (Create, Read, Update, Delete) for trips
-- 📅 **Bookings** — Track flights, hotels, and activities
+- 🔐 **Authentication** — JWT-based Register, Sign-in, and Profile management
+- 🗺️ **Trip Management** — Full CRUD (Create, Read, Update, Delete) for journeys
+- 📅 **Bookings** — Track flights, hotels, and activities with API integration
 - ❤️ **Favorites** — Save and manage dream destinations
 - 🆘 **Emergency** — SOS contacts, live map, and emergency alert system
-- 🎨 **Travel Style Quiz** — 5-question personality quiz with destination matches
-- 🌙 **Light/Dark Mode** — Theme persisted in localStorage
+- 🎨 **Travel Style Quiz** — Personality quiz with destination matching logic
+- 🌙 **Light/Dark Mode** — Theme persisted across sessions
 
 ### Technical
-- ⚡ **Code Splitting** — All 12 pages lazy-loaded with React.lazy + Suspense
-- 🛡️ **Error Boundary** — Global error UI with friendly fallback
-- 🔔 **Toast Notifications** — Success/error/info/warning feedback on all CRUD ops
-- 💀 **Skeleton Loaders** — Smooth loading states for cards and lists
-- 🪝 **Custom Hooks** — `useDebounce`, `useFetch`, `useLocalStorage`, `useSessionStorage`, `usePageTitle`
-- 🔒 **Protected Routes** — All dashboard pages require authentication
-- 📊 **localStorage + sessionStorage** — Persistent user data + temp form state
-- 🔍 **SEO** — Dynamic page titles, meta description, Open Graph, Twitter Card, Schema.org
+- ⚡ **Code Splitting** — All 12 pages lazy-loaded for peak performance
+- 🛡️ **Error Boundary** — Global error handling with a friendly fallback UI
+- 🔔 **MUI Integration** — Tooltips, Badges, and Loaders from Material UI
+- 📊 **Analytics** — Custom event tracking and page view monitoring
+- 🔍 **SEO** — Dynamic titles, meta tags, and generated `sitemap.xml`
+- 📚 **Swagger UI** — Fully interactive API documentation
 
 ---
 
 ## 📁 Folder Structure
 
 ```
-frontend/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── components/         # Reusable UI components
-│   │   ├── ErrorBoundary.jsx
-│   │   ├── Skeleton.jsx / Skeleton.css
-│   │   ├── Sidebar.jsx / Sidebar.css
-│   │   ├── Topbar.jsx / Topbar.css
-│   │   ├── ProtectedRoute.jsx
-│   │   ├── auth/
-│   │   ├── dashboard/
-│   │   ├── icons/
-│   │   └── layout/
-│   ├── context/            # Global state providers
-│   │   ├── AuthContext.jsx       # Login, register, logout, profile
-│   │   ├── StorageContext.jsx    # CRUD factory for trips/bookings/favorites/emergency
-│   │   ├── ThemeContext.jsx      # Light/Dark mode
-│   │   └── ToastContext.jsx      # Toast notification system
-│   ├── data/
-│   │   └── images.js            # Centralized Unsplash image registry
-│   ├── hooks/              # Custom hooks
-│   │   ├── useDebounce.js
-│   │   ├── useFetch.js
-│   │   ├── useStorage.js        # useLocalStorage + useSessionStorage
-│   │   └── usePageTitle.js
-│   ├── pages/              # Route-level page components
-│   │   ├── LoginPage.jsx / .css
-│   │   ├── Dashboard.jsx / .css
-│   │   ├── Destinations.jsx / .css
-│   │   ├── Trips.jsx / .css
-│   │   ├── Bookings.jsx / .css
-│   │   ├── Experiences.jsx / .css
-│   │   ├── Favorites.jsx / .css
-│   │   ├── Messages.jsx / .css
-│   │   ├── TravelStyle.jsx / .css
-│   │   ├── Settings.jsx / .css
-│   │   ├── Profile.jsx / .css
-│   │   └── Emergency.jsx / .css
-│   ├── App.jsx             # Routes + Providers + Lazy loading
-│   ├── main.jsx
-│   └── index.css
-├── index.html              # SEO meta tags, OG tags
-├── vite.config.js
-├── tailwind.config.js
-└── package.json
+wanderlust/
+├── frontend/               # React + Vite application
+│   ├── public/             # Static assets & sitemap.xml
+│   └── src/
+│       ├── components/     # Reusable UI components (Sidebar, Topbar, etc.)
+│       ├── context/        # Theme & Toast state management
+│       ├── services/       # Axios API integration & Analytics
+│       ├── store/          # Redux Toolkit slices (Auth, Trips, etc.)
+│       └── pages/          # Lazy-loaded page components
+└── backend/                # Node.js + Express API
+    ├── models/             # MongoDB Schemas (User, Trip, etc.)
+    ├── routes/             # API Endpoints (Auth, Trips, Uploads)
+    ├── middleware/         # JWT Auth & Error handlers
+    └── server.js           # Server entry point & Swagger config
 ```
 
 ---
@@ -94,6 +59,7 @@ frontend/
 
 ### Prerequisites
 - Node.js ≥ 18
+- MongoDB Atlas Account
 - npm ≥ 9
 
 ### Steps
@@ -101,23 +67,19 @@ frontend/
 ```bash
 # 1. Clone the repository
 git clone https://github.com/dhyeyptl10/nomadNest.git
-cd nomadNest/frontend
+cd nomadNest
 
-# 2. Install dependencies
+# 2. Setup Backend
+cd backend
 npm install
+# Create .env with MONGO_URI, JWT_SECRET, PORT
+npm start
 
-# 3. Start development server
+# 3. Setup Frontend
+cd ../frontend
+npm install
+# Create .env with VITE_API_URL
 npm run dev
-
-# 4. Open in browser
-# → http://localhost:5173
-```
-
-### Production Build
-
-```bash
-npm run build
-npm run preview
 ```
 
 ---
@@ -126,25 +88,14 @@ npm run preview
 
 | Layer | Technology |
 |-------|------------|
-| Framework | React 18 + Vite |
-| Routing | React Router v6 |
-| Styling | Vanilla CSS + Tailwind CSS |
-| State | React Context API + localStorage |
-| Maps | Leaflet.js |
-| Images | Unsplash CDN |
-| Icons | Inline SVG |
-| Fonts | Google Fonts (Playfair Display, DM Sans) |
-
----
-
-## 🔐 Authentication
-
-- Passwords stored as `btoa()` encoded strings in `localStorage`
-- User data keyed by `userId` to prevent cross-user data leakage
-- All protected routes verified via `AuthContext.currentUser`
-- Logout clears auth token and redirects to `/`
-
-> ⚠️ For production: replace with a real backend API + JWT authentication
+| **Frontend** | React 18 + Vite |
+| **State Management** | Redux Toolkit |
+| **Styling** | Tailwind CSS + Material UI |
+| **Backend** | Node.js + Express |
+| **Database** | MongoDB Atlas |
+| **Authentication** | JWT (JSON Web Tokens) |
+| **Documentation** | Swagger / OpenAPI 3.0 |
+| **Deployment** | Render (Backend) + Netlify (Frontend) |
 
 ---
 
@@ -152,19 +103,16 @@ npm run preview
 
 | Item | Status |
 |------|--------|
-| Vite project setup | ✅ |
-| React Router (public + protected routes) | ✅ |
-| Custom Hooks (useDebounce, useFetch, useStorage, usePageTitle) | ✅ |
-| localStorage + sessionStorage | ✅ |
-| Code splitting (React.lazy + Suspense) | ✅ |
-| Error Boundary | ✅ |
-| Toast Notifications | ✅ |
-| Skeleton Loaders | ✅ |
-| SEO (title, meta, OG, Twitter, Schema.org) | ✅ |
+| Vite + Tailwind + MUI setup | ✅ |
+| Redux Toolkit State Management | ✅ |
+| JWT Authentication System | ✅ |
+| Full CRUD Operations | ✅ |
+| Interactive API Documentation | ✅ |
+| SEO (Helmet + Sitemap) | ✅ |
+| Analytics Tracking | ✅ |
+| Code splitting & Error Boundary | ✅ |
 | Light/Dark mode | ✅ |
-| Full CRUD (Trips, Bookings, Favorites, Emergency) | ✅ |
-| Responsive design | ✅ |
-| Clean folder structure | ✅ |
+| Live Production Deployment | ✅ |
 
 ---
 
@@ -172,3 +120,4 @@ npm run preview
 
 **Dhyey Patel** — Full Stack Developer  
 GitHub: [@dhyeyptl10](https://github.com/dhyeyptl10)
+LinkedIn: [Dhyey Patel](https://linkedin.com/in/dhyey-patel)
