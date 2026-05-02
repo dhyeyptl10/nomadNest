@@ -23,6 +23,11 @@
   gap: 16px;
   margin-bottom: 24px;
 }
+@media (max-width: 768px) {
+  .trip-summary {
+    flex-direction: column;
+  }
+}
 .sum-card {
   flex: 1;
   background: var(--surface);
@@ -213,6 +218,9 @@
 .tf-grid {
   display:grid; grid-template-columns:1fr 1fr; gap:14px;
   margin-bottom:20px;
+}
+@media (max-width: 600px) {
+  .tf-grid { grid-template-columns: 1fr; }
 }
 .tf-full { grid-column:1 / -1; }
 .tf-field { display:flex; flex-direction:column; gap:6px; }
