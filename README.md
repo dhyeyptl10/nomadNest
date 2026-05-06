@@ -6,7 +6,7 @@
 
 ## 🚀 Important Links
 
-- **🎨 Figma Design:** [https://ream-plow-46277508.figma.site/](https://ream-plow-46277508.figma.site/)
+- **🎨 Figma Design:** [https://ream-plow-46277508.figma.site/](https://www.figma.com/proto/zJsU3EkLp67NMOfD0ZkOmF/Untitled?page-id=0%3A1&node-id=43-4846&p=f&viewport=2109%2C544%2C0.07&t=LXzHwKmgOUZitoX1-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=43%3A4846)
 - **🌐 Live Project:** [https://nomadnesttt.netlify.app/](https://nomadnesttt.netlify.app/)
 - **📖 API Documentation:** [https://nomadnest-x4an.onrender.com/api-docs/](https://nomadnest-x4an.onrender.com/api-docs/)
 - **🛠️ Backend Deployed:** [https://nomadnest-x4an.onrender.com/](https://nomadnest-x4an.onrender.com/)
