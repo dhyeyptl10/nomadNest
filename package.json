@@ -1,0 +1,11 @@
+{
+  "name": "wanderlust-workspace",
+  "version": "1.0.0",
+  "description": "NomadNest / Wanderlust Full-Stack Travel App",
+  "private": true,
+  "scripts": {
+    "start": "node backend/server.js",
+    "build": "npm --prefix backend install",
+    "dev": "npm --prefix frontend run dev"
+  }
+}
