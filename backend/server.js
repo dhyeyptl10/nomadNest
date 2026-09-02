@@ -157,12 +157,29 @@ if (!mongoUri) {
   dbStatus.error = 'MONGO_URI is missing in environment variables';
   console.error('CRITICAL WARNING: MONGO_URI is not defined in environment variables!');
 } else {
+  const User = require('./models/userModel');
   mongoose.connect(mongoUri)
-    .then(() => {
+    .then(async () => {
       dbStatus.connected = true;
       dbStatus.error = null;
       dbStatus.connectedAt = new Date().toISOString();
       console.log('MongoDB Connected successfully');
+
+      // Auto seed default demo user if DB is empty
+      try {
+        const count = await User.countDocuments();
+        if (count === 0) {
+          await User.create({
+            name: 'Ananya Sharma',
+            email: 'ananya@example.com',
+            password: 'password123',
+            avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=160&h=160&q=80&auto=format&fit=crop',
+          });
+          console.log('Default demo user auto-seeded: ananya@example.com / password123');
+        }
+      } catch (seedErr) {
+        console.warn('Auto-seed check note:', seedErr.message);
+      }
     })
     .catch((err) => {
       dbStatus.connected = false;

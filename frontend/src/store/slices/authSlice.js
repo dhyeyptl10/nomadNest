@@ -5,13 +5,26 @@ const userInfoFromStorage = localStorage.getItem('userInfo')
   ? JSON.parse(localStorage.getItem('userInfo'))
   : null;
 
+const extractErrorMessage = (error) => {
+  if (error.response?.data?.message) {
+    return error.response.data.message;
+  }
+  if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+    return 'Server took too long to respond. Render free tier may be waking up (please wait ~30s and try again).';
+  }
+  if (error.message === 'Network Error' || !error.response) {
+    return 'Unable to reach backend server. Please ensure the Render service is running and VITE_API_URL is configured on Netlify.';
+  }
+  return error.message || 'Authentication failed';
+};
+
 export const login = createAsyncThunk('auth/login', async ({ email, password }, thunkAPI) => {
   try {
     const { data } = await api.post('/auth/login', { email, password });
     localStorage.setItem('userInfo', JSON.stringify(data));
     return data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message || error.message);
+    return thunkAPI.rejectWithValue(extractErrorMessage(error));
   }
 });
 
@@ -21,7 +34,7 @@ export const register = createAsyncThunk('auth/register', async ({ name, email, 
     localStorage.setItem('userInfo', JSON.stringify(data));
     return data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message || error.message);
+    return thunkAPI.rejectWithValue(extractErrorMessage(error));
   }
 });
 
@@ -31,7 +44,7 @@ export const updateProfile = createAsyncThunk('auth/updateProfile', async (userD
     localStorage.setItem('userInfo', JSON.stringify(data));
     return data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data.message || error.message);
+    return thunkAPI.rejectWithValue(extractErrorMessage(error));
   }
 });
 
